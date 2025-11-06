@@ -1,0 +1,229 @@
+{% extends "home_3.html" %}
+
+{% block title %}
+
+        <div style="text-align: right; margin-top: -30px; margin-right: 30px;">
+            Вы авторизованы как " {{user}} "
+            <a href="{% url 'app_viz:logout' %}" >выход</a>
+         </div>
+
+<div style="display: flex;
+            justify-content: center;
+            align-items: center;    ">
+    <h2>Внести изменения в визитку</h2>
+</div>
+<hr>
+
+{% endblock %}
+
+{% block content %}
+edit_card_2.html
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+<div class="form-container" style="display: flex; align-items: center; justify-content: space-between;">
+
+<!--    <div class="input-fields" style="flex: 1;">-->
+    <div class="input-fields">
+            <div class="details-container">
+                <div class="field-label">Имя:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input" id="name" name="name" value="{{business_card.name}}" required><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Компания:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input" value="{{business_card.company}}" id="company" name="company"><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Должность:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input" value="{{business_card.position|default_if_none:'-'}}" id="position" name="position"><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Место встречи:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input" value="{{business_card.point_meet|default_if_none:'-'}}" id="point_meet" name="point_meet"><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Помощник:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input" value="{{business_card.helper|default_if_none:'-'}}" id="helper" name="helper"><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Телефон:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input"
+                           value="{{business_card.phone}}"
+                           id="phone" name="phone"  value=" - "><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Email:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text" class="rounded-input"
+                           value="{{business_card.email|default_if_none:'-'   }}"
+                           id="email" name="email"  value=" - "><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Адрес:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text"
+                           class="rounded-input"
+                           value="{{business_card.address|default_if_none:'-'   }}"
+                           id="address" name="address"  value=" - "><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                <div class="field-label">Сайт:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">
+                    <input type="text"
+                           class="rounded-input"
+                           value="{{business_card.website|default_if_none:'-'   }}"
+                           id="website" name="website"  value=" - "><br><br>
+                </div>
+            </div>
+
+            <div class="details-container">
+                    <div class="field-label">Фото:</div>
+                    <div class="vertical-line"></div>
+                    <div class="field-value">
+                        <input type="file" class="rounded-input"   id="photo" name="photo" accept="image/jpeg"><br><br>
+                    </div>
+                </div>
+    </div>
+
+    <!-- Правая часть с фотографией -->
+    <div class="photo-column">
+        <div class="photo-container">
+            {% if business_card.photo %}
+            <img src="{{ business_card.photo.url }}"
+                 alt="Фото {{ business_card.name }}"
+                 class="card-photo">
+            {% else %}
+            <div class="no-photo">    <i class="fas fa-camera"></i>
+                <p>Фото отсутствует</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+                <div class="button-container">
+                <a href="{% url 'app_viz:v_home' %}" class="btn back-btn">Назад</a>
+                <button name="btn_edit_save" type="submit" class="btn save-btn">Сохранить</button>
+                </div>
+</form>
+<style>
+
+    .form-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    max-height: 80vh;
+}
+
+.input-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.photo-column {
+    flex: 0 0 400px; /* Уменьшил ширину с 1000px */
+    position: sticky;
+    top: 40px;
+}
+
+.photo-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.details-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    min-height: 40px;
+}
+
+.field-label {
+    flex: 0 0 120px; /* Ширина лейблов */
+    font-weight: 600;
+    color: #555;
+    text-align: right;
+}
+
+.vertical-line {
+    width: 1px;
+    height: 30px;
+    background: #ddd;
+    margin: 0 10px;
+    flex-shrink: 0; /* Чтобы линия не сжималась */
+}
+
+.field-value {
+    flex: 1;
+    color: #333;
+    min-width: 0; /* Для правильного сжатия */
+}
+
+/* Стили для инпутов */
+.rounded-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.rounded-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Стили для КНОПОК  */
+.button-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+------------------------
+
+</style>
+
+{% endblock %}

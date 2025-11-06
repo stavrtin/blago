@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Данные из БД</title>
+    {% load static %}
+<!--    <link rel="stylesheet" type="text/css" href="/static/styles.css">-->
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <style>
+<!--в CSS  все смотри-->
+
+    </style>
+</head>
+<body>
+    <header>
+        <br>
+        {% block title %}
+
+        <div style="text-align: right; margin-top: -30px; margin-right: 30px;">
+            Вы авторизованы как " {{user}} "
+            <a href="{% url 'app_calc:logout' %}" >выход</a>
+         </div>
+
+
+        <div data-v-634f1aae="" class="mb-8 flex-y-center page-header__title">
+            <h2 data-v-634f1aae="" class="mb-0" style="display: inline;">Визитки           </h2>
+            <span data-v-634f1aae="" class="badge-text_0" style="display: inline;">{{ total_records }}</span>
+        </div>
+        <br>
+
+        <nav>
+<!--            <a href="{% url 'app_calc:v_home' %}" class="active">Поиск</a>-->
+            <a href="{% url 'app_calc:v_home' %}" >Поиск</a>
+            <a href="{% url 'app_calc:new_card' %}">Новая визитка</a>
+<!--            <a href="{% url 'app_calc:v_home' %}">Назад</a>-->
+        </nav>
+                 {% endblock %}
+        <div style="text-align: right; margin-top: -30px; margin-bottom: 20px;">
+            <br><br>
+<!--            Вы авторизованы как " {{user}} "-->
+        </div>
+    </header>
+    {% block content %}
+home_3.html
+    <form id="filterForm" method="GET" action="" class="search-container">
+
+
+
+        <div style="width: 100%;">
+            <div>
+             <a href="{% url 'app_calc:v_home' %}?search_name=&search_company"
+                   class="btn_save"
+                   style="border-radius: 10px; padding: 5px 20px; border: 1px solid #ccc;">Сбросить фильтры</a>
+
+                <input id="search_name"
+                       class="input_search"
+                       type="text"
+                       name="search_name"
+                       placeholder="Введите ФИО"
+                       value="{{ search_name }}">
+                <input id="search_company"
+                       class="input_search"
+                       type="text"
+                       name="search_company"
+                       placeholder="Организация"
+                       value="{{ search_company }}">
+                <input id="search_position"
+                       class="input_search"
+                       type="text"
+                       name="search_position"
+                       placeholder="Должность"
+                       value="{{ search_position }}">
+                <input id="search_helper"
+                       class="input_search"
+                       type="text"
+                       name="search_helper"
+                       placeholder="Помощник"
+                       value="{{ search_helper }}">
+
+                   <button class="btn_save" type="submit">
+<!--                        style="border-radius: 10px; padding: 5px 10px; border: 1px solid #ccc;">-->
+                        Применить фильтр</button>
+            </div>
+            <div style="text-align: right;">
+                Количество записей на странице: <input type="number" style="width: 50px; border-radius: 10px; padding: 5px 10px; border: 1px solid #ccc;" name="records_per_page" placeholder="Записей на странице" value="{{ records_per_page }}" min="1">
+            </div>
+        </div>
+    </form>
+    <table class="table_home">
+        <thead>
+<!--            <tr>-->
+                <th>ФИО</th>
+                <th>Организация</th>
+                <th>Должность</th>
+<!--                <th>Телефоны</th>-->
+<!--                <th>email</th>-->
+<!--                <th>Адрес</th>-->
+                <th>Место встречи</th>
+                <th>Помощник</th>
+<!--            </tr>-->
+        </thead>
+        <tbody>
+            {% for item in data_smp %}
+                <tr>
+                    <td>
+                    <a href="{% url 'app_calc:person_detals' item.id %}" class=""
+                       style="text-decoration: none; color: #404040">{{ item.name }}</a>
+                    </td>
+
+                     <td>  <a href="{% url 'app_calc:person_detals' item.id %}" class=""
+                       style="text-decoration: none; color: #404040">{{ item.company|default_if_none:'-'   }}</a> </td>
+                     <td>   {{ item.position }}</td>
+<!--                     <td>   {{ item.phone }}</td>-->
+<!--                     <td>   {{ item.email }}</td>-->
+<!--                     <td>   {{ item.address }}</td>-->
+                     <td>   {{ item.point_meet|default_if_none:'-'   }}</td>
+                     <td>   {{ item.helper|default_if_none:'-'   }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+    <div class="pagination">
+        {% if data_smp.has_previous %}
+            <a href="?page={{ data_smp.previous_page_number }}&records_per_page={{ records_per_page }}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'records_per_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Предыдущая</a>
+        {% endif %}
+        <span class="current">
+            Страница {{ data_smp.number }} из {{ data_smp.paginator.num_pages }}.
+        </span>
+        {% if data_smp.has_next %}
+            <a href="?page={{ data_smp.next_page_number }}&records_per_page={{ records_per_page }}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'records_per_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Следующая</a>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+
+<footer >
+    <hr>
+</footer>
+</body>
+</html>

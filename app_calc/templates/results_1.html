@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Итоги</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 2100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: #3498db;
+            transition: background 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: #2980b9;
+        }
+
+        /* Table Sections */
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Блок ведомостей */
+        .tables-section {
+            margin-bottom: 30px;
+        }
+
+        .tables-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .table-wrapper {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Блок балансов */
+        .balance-section {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+        .balance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .balance-table th {
+            background: #2c3e50;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .tables-container {
+                flex-direction: column;
+            }
+
+            .table-wrapper {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .balance-section {
+                padding: 15px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+results_1.html
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1> Итоги по проекту  "{{project}}"</h1>
+            <nav class="nav-menu">
+                <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Ввод данных</a>
+                <a href="{% url 'app_calc:results_view'  project.id %}" class="nav-item">Итоги</a>
+            </nav>
+        </header>
+
+        <!-- Блок 2: Ведомости -->
+        <div class="tables-section">
+            <h2>Ведомости</h2>
+
+            <div class="tables-container">
+                <!-- Ведомость демонтажа -->
+                <div class="table-wrapper">
+                    <h3 style="text-align: center">Ведомость демонтажа</h3>
+
+
+                            <table  class="data-table">
+            <thead>
+                <tr>
+                    <th class="number-column">№</th>
+                    <th class="name-column">Наименование</th>
+                    <th class="area-column">Площадь, м²</th>
+                    <th class="note-column">Примечание</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <!-- Категория -->
+                <tr class="category-row">
+                    <td colspan="4">{{ category.name }}</td>
+                </tr>
+
+                <!-- Элементы категории -->
+                {% for item in category.items %}
+                <tr>
+                    <td class="number-column">{{ item.number }}</td>
+                    <td class="name-column">{{ item.name }}</td>
+                    <td class="area-column">{{ item.area }}</td>
+                    <td class="note-column">{{ item.note }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+
+
+<!--         <table class="data-table">-->
+<!--                        <thead>-->
+<!--                            <tr>-->
+<!--                                <th>№</th>-->
+<!--                                <th>Наименование</th>-->
+<!--                                <th>Площадь</th>-->
+<!--                                <th>Примечание</th>-->
+<!--                            </tr>-->
+<!--                        </thead>-->
+
+<!--                        <tbody>-->
+
+
+
+<!--                            {% for item in demontaj_total %}-->
+<!--                  <tr>-->
+<!--                                <td>{{ forloop.counter }}</td>-->
+<!--&lt;!&ndash;                                <td>{{ item.element_id__name_element }}</td>&ndash;&gt;-->
+<!--                                <td> <b> {{item.element_id__name_element }} </b>- {{ item.property_id__property_name }}</td>-->
+<!--                                <td>{{ item.total_square }}</td>-->
+<!--                                <td>{{ item.event }}</td>-->
+<!--                            </tr>-->
+
+<!--                            {% empty %}-->
+<!--                            {% for i in "123" %}-->
+<!--                            <tr>-->
+<!--                                <td>{{ forloop.counter }}</td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                            </tr>-->
+<!--                            {% endfor %}-->
+<!--                            {% endfor %}-->
+
+<!--                        </tbody>-->
+<!--                    </table>-->
+                </div>
+
+                <!-- Ведомость тротуаров -->
+                <div class="table-wrapper">
+                    <h3>Ведомость тротуаров</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Условное обозн.</th>
+                                <th>Наименование</th>
+<!--                                <th>Тип покрытия</th>-->
+                                <th>Площадь, кв.м</th>
+                                <th>Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in trotuar_dorojki_total %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td></td>
+                                <td> <b> {{item.element_id__name_element }}</b> - {{item.property_id__property_name }}</td>
+                                <td>{{ item.total_square }}</td>
+                                <td>{{ item.event }}</td>
+                            </tr>
+                            {% empty %}
+                            {% for i in "123456" %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Ведомость газонов -->
+                <div class="table-wrapper">
+                    <h3>Ведомость газонов / травяного покрова</h3>
+
+<!------------------------------ таблица ГАЗОНОВ н-------------------------->
+
+<!------------------------------ таблица ГАЗОНОВ 2 н-------------------------->
+
+<table name="gaz" class="data-table" border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Площадь</th>
+            <th>Сумма (устр+сохр+восст)</th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+        {% regroup total_zelenl by property_id__property_name as properties_list %}
+
+        {% for property in properties_list %}
+        <!-- Основная строка с названием характеристики -->
+        <tr style="background-color: #f0f0f0;">
+            <td><b>{{ forloop.counter }}</b></td>
+            <td><b>{{ property.grouper }}</b></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+         <!-----------------       строка с УНИЧТОЖЕНИЕМ -н-->
+             {% for item in property.list %}
+                  {% if item.event == 'уничтожение' %}
+                    <tr>
+                        <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
+                        <td style="padding-left: 30px;"> уничтожение         </td>
+                        <td>{{ item.total_square }}</td>
+                      </tr>
+                  {% endif %}
+            {% endfor %}
+        <!-----------------        строка с УНИЧТОЖЕНИЕМ -к-->
+
+        <!-- Подстроки с событиями -->
+        {% for item in property.list %}
+       {% if item.event == 'устройство' or  item.event == 'сохранение' or  item.event == 'восстановление'%}<!-- строки -->
+        <tr>
+
+            <td style="padding-left: 30px;"> {{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
+            <td style="padding-left: 30px;"> {{item.event}}   </td>
+            <td>{{ item.total_square }}</td>
+
+            <!-- Ячейка с суммой - отображаем только для первой строки -->
+            {% if forloop.first %}
+
+             {% if item.mark_of_destroy == 0 %}
+                <td rowspan="{{ property.list|length|add:'0' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
+             {% endif %}
+             {% if item.mark_of_destroy == -1 %}
+                <td rowspan="{{ property.list|length|add:'-1' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
+             {% endif %}
+
+                   <!-- вычисление (вставка суммы из представления) нач-->
+
+                    {% for key, value in calcilate_zelen_summ.items %}
+                      {% if property.grouper == key %} <b>{{value}}</b>
+                      {% endif %}
+                   {% endfor %}
+                    <!-- вычисление (вставка суммы из представления) конец-->
+                </td>
+
+
+
+
+
+
+
+
+
+            {% endif %}
+        </tr>
+        {% endif %}  <!-- строки -->
+        {% endfor %}
+
+        {% empty %}
+        <tr>
+            <td colspan="4" style="text-align: center;">Нет данных по озеленению</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!------------------------------ таблица ГАЗОНОВ к-------------------------->
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок 3: Балансы старые -->
+        <div class="balance-section">
+            <h2>Сравнительнные балансовые показатели территории проектирования </h2><br>
+            <a href="{% url 'app_calc:v_edit_all_input_data' project.id %}" class="nav-item">Корректир</a>
+
+            <table class="data-table">
+                <thead>
+
+                <tr>
+          <th rowspan="2" >№</th>
+            <th rowspan="2">Наименование</th>
+            <th colspan="2">Существующее положение</th>
+            <th colspan="2">Проектное положение</th>
+        </tr>
+        <tr>
+            <th class="subheader">кв.м</th>
+            <th class="subheader">%</th>
+            <th class="subheader">кв.м</th>
+            <th class="subheader">%</th>
+        </tr>
+
+                </thead>
+
+
+<tbody>
+    <!-- Первая строка - Общая площадь -->
+    <tr>
+        <td>1</td>
+        <td style="text-align: center"  >Общая площадь  </td>
+
+        <td style="text-align: center;
+           {% if total_area_now != total_area_proj %}background-color: #f35e5e;{% else %}background-color: #68f368;{% endif %}"
+            {% if total_area_now != total_area_proj %}title="Устраните разницу в площадях"{% else %}title="Площади совпали"{% endif %}>
+            <b>{{ total_area_now }}</b>
+        </td>
+        <td style="text-align: center" >100,00 %</td>
+<!--        <td style="text-align: center"  >{{ total_area_proj}} </td>-->
+<td style="text-align: center;
+           {% if total_area_now != total_area_proj %}background-color: #f35e5e;{% else %}background-color: #68f368;{% endif %}"
+    {% if total_area_now != total_area_proj %}title="Устраните разницу в площадях"{% else %}title="Площади совпали"{% endif %}>
+    <b>{{ total_area_proj }}</b>
+</td>
+
+        <td style="text-align: center" >100,00 %</td>
+<!--        <td>Отклонение от существующего:<br> {{delta_now_proj}} м2</td>-->
+
+    </tr>
+
+    <!-- Вторая строка - Площадь зданий и сооружений -->
+            <tr class="category-header" style="background-color: #bfd5f3;">
+                <td><b>2</b></td>
+                <td>Здания и сооружения</td>
+                <td style="text-align: center" >{{ buildings_total_now }}</td>
+                <td class="percentage" style="text-align: center" >{{ buildings_percentage_now|floatformat:2  }}%</td>
+                <td style="text-align: center" >{{ buildings_total_proj }}</td>
+                <td class="percentage" style="text-align: center" >{{ buildings_percentage_proj|floatformat:2  }}%</td>
+            </tr>
+
+            {% for key, value in json_data_now_and_proj.items %}
+                {% if "Здания и сооружения" in key %}
+                <tr class="subcategory">
+                    <td></td>
+                    <td style="padding-left: 30px;">{{ key|cut:"Здания и сооружения." }}</td>
+                    <td style="text-align: center" >{{ value.0 }}</td>
+                    <td></td>
+                    <td style="text-align: center" >{{ value.1 }}</td>
+                    <td></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+
+
+    <!-- Третья строка - Площадь дорожных покрытий -->
+            <tr class="category-header" style="background-color: #bfd5f3;">
+                <td><b>3</b></td>
+                <td>Покрытия</td>
+                <td style="text-align: center" >{{ coverings_total_now }}</td>
+                <td class="percentage" style="text-align: center" >{{ coverings_percentage_now|floatformat:2  }}%</td>
+                <td style="text-align: center" >{{ coverings_total_proj }}</td>
+                <td class="percentage" style="text-align: center" >{{ coverings_percentage_proj|floatformat:2  }}%</td>
+
+            </tr>
+<!--            % for key, value in json_now_balance.items %-->
+            {% for key, value in json_data_now_and_proj.items %}
+                {% if "Покрытия" in key %}
+                <tr class="subcategory">
+                <td></td>
+                    <td style="padding-left: 30px;">{{ key|cut:"Покрытия." }}</td>
+                    <td style="text-align: center" >{{ value.0|default:"" }}</td>
+                    <td></td>
+                    <td style="text-align: center" >{{ value.1|default:""  }}</td>
+                    <td></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+
+
+    <!-- Третья строка - Озеленения -->
+            <tr class="category-header" style="background-color: #bfd5f3;">
+                <td>4</td>
+                <td ><b>Площадь озеленения, в том числе...</b></td>
+                <td style="text-align: center" >{{ landscaping_total_now }}</td>
+                <td class="percentage" style="text-align: center" >{{ landscaping_percentage_now|floatformat:2  }}%</td>
+                <td style="text-align: center" >{{ landscaping_total_proj }}</td>
+                <td class="percentage" style="text-align: center" >{{ landscaping_percentage_proj|floatformat:2  }}%</td>
+            </tr>
+<!--            % for key, value in json_now_balance.items %-->
+            {% for key, value in json_data_now_and_proj.items %}
+                {% if "Озеленение (обводнение)." in key %}
+                <tr class="subcategory">
+                     <td></td>
+                    <td style="padding-left: 30px;">{{ key|cut:"Озеленение (обводнение)." }}</td>
+                    <td style="text-align: center" >{{ value.0|default:""  }}</td>
+                    <td></td>
+                    <td style="text-align: center" >{{ value.1|default:""  }}</td>
+                    <td></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+
+    <!-- 4 строка - Бортовой камень -->
+            <tr class="category-header" style="background-color: #bfd5f3;">
+                <td>5</td>
+                <td>Бортовой камень</td>
+                <td style="text-align: center" >{{ stone_total_now }}</td>
+                <td class="percentage" style="text-align: center" >{{ stone_percentage_now|floatformat:2 }}%</td>
+                <td style="text-align: center" >{{ stone_total_proj }}</td>
+                <td class="percentage" style="text-align: center" >{{ stone_percentage_proj|floatformat:2  }}%</td>
+            </tr>
+<!--            % for key, value in json_now_balance.items %-->
+            {% for key, value in json_data_now_and_proj.items %}
+                {% if "Бортовой камень." in key %}
+                <tr class="subcategory">
+                    <td></td>
+                    <td style="padding-left: 30px;">{{ key|cut:"" }}</td>
+                    <td style="text-align: center" >{{ value.0|default:""  }}</td>
+                    <td></td>
+                    <td style="text-align: center" >{{ value.1|default:""  }}</td>
+                    <td></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+
+
+<!---------------------------ТЕСТ-->
+
+    <table class="balance-table">
+    <thead>
+        <tr>
+            <th rowspan="2">Наименование</th>
+            <th colspan="2">Существующее положение</th>
+            <th colspan="2">Проектное положение</th>
+        </tr>
+        <tr>
+            <th class="subheader">кв.м</th>
+            <th class="subheader">%</th>
+            <th class="subheader">кв.м</th>
+            <th class="subheader">%</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
+        </tr>
+    </tbody>
+</table>
+
+<!---------------------------ТЕСТ-->
+
+</tbody>
+<!--{{input_data_now}}<br><br>-->
+<!--                {{input_data_project}}<br><br>-->
+<!--                {{json_data1}}-->
+<!--                {{project.id}}-->
+
+            </table>
+
+<!--            -------------------------------------------------->
+
+<!--            -------------------------------------------------->
+
+
+
+        </div>
+    </div>
+</body>
+</html>

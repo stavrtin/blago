@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение удаления</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        .warning {
+            background-color: #ffebee;
+            border: 1px solid #e74c3c;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .btn-group {
+            margin-top: 25px;
+        }
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ Подтверждение удаления</h1>
+
+        <div class="warning">
+            <p>Вы уверены, что хотите удалить эту запись?</p>
+            <p><strong>Элемент:</strong> {{ input_data.element_id.name_element }}</p>
+            <p><strong>Действие:</strong> {{ input_data.event }}</p>
+            <p><strong>Характеристика:</strong> {{ input_data.property_id.property_name }}</p>
+            <p><strong>Площадь:</strong> {{ input_data.square|default:"не указана" }}</p>
+        </div>
+
+        <div class="btn-group">
+            <form method="post" action="{% url 'app_calc:delete_input_data' input_data.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-delete">Да, удалить</button>
+            </form>
+            <a href="{% url 'app_calc:results_view' input_data.project_id.id %}" class="btn-cancel">Отмена</a>
+        </div>
+    </div>
+</body>
+</html>

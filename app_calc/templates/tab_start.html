@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система ввода данных - {{ project.name }}</title>
+<style>
+  * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: #3498db;
+            transition: background 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: #2980b9;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            align-self: center;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Table Section */
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-group {
+                min-width: auto;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .input-section {
+                padding: 15px;
+            }
+        }
+
+        /* Стили для скрытых полей */
+        .hidden {
+            display: none;
+        }
+
+        .length-disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+
+     /* Добавляем к существующим стилям */
+    .filters {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .filters .form-group {
+        margin-bottom: 0;
+    }
+
+    .filters label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .filters input {
+        border: 2px solid #ced4da;
+        transition: border-color 0.3s ease;
+    }
+
+    .filters input:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Ввод данных по проекту "{{ project.name }}"</h1>
+<!--            <h2 style="color: #ecf0f1; margin-bottom: 15px;">Проект:      {{ project.name }}</h2>-->
+            <nav class="nav-menu">
+                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
+                <a href="{% url 'app_calc:results_view' project.id %}" class="nav-item">Просмотр итогов</a>
+            </nav>
+        </header>
+
+        <!-- Блок 1: Ввод данных -->
+        <div class="input-section">
+            <form method="POST" class="input-form" id="dataForm">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="element">Элемент площади:</label>
+                        <select id="element" name="element" required>
+                            <option value="">-- Выберите элемент --</option>
+                            {% for element in elements %}
+                            <option value="{{ element.id }}">{{ element.name_element }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="property">Характеристика:</label>
+                        <select id="property" name="property" required disabled>
+                            <option value="">-- Сначала выберите элемент --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <!-- Таблица для Покрытий и Зданий/сооружений -->
+                        <table class="data-table" id="table-pokritiya">
+                            <thead>
+                                <tr>
+                                    <th>Тип работ</th>
+                                    <th>Площадь</th>
+                                    <th style="display: none;">Длина (скрыто)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Сохранение</td>
+                                    <td><input type="number" name="square_sohran_pokr" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_sohran_pokr" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Демонтаж</td>
+                                    <td><input type="number" name="square_demon_pokr" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_demon_pokr" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Ремонт</td>
+                                    <td><input type="number" name="square_remont_pokr" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_remont_pokr" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Устройство</td>
+                                    <td><input type="number" name="square_ustroy_pokr" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_ustroy_pokr" value="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Таблица для Бортового камня -->
+                        <table class="data-table hidden" id="table-bortovoy">
+                            <thead>
+                                <tr>
+                                    <th>Тип работ</th>
+                                    <th>Площадь</th>
+                                    <th>Длина</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Демонтаж</td>
+                                    <td><input type="number" name="square_demon_bort" step="0.1"></td>
+                                    <td><input type="number" name="length_demon_bort" step="0.1"></td>
+                                </tr>
+                                <tr>
+                                    <td>Сохранение</td>
+                                    <td><input type="number" name="square_sohran_bort" step="0.1"></td>
+                                    <td><input type="number" name="length_sohran_bort" step="0.1"></td>
+                                </tr>
+<!--                                <tr>-->
+<!--                                    <td>Восстановление</td>-->
+<!--                                    <td><input type="number" name="square_vosstan_bort" step="0.1"></td>-->
+<!--                                    <td><input type="number" name="length_vosstan_bort" step="0.1"></td>-->
+<!--                                </tr>-->
+                                <tr>
+                                    <td>Установка</td>
+                                    <td><input type="number" name="square_ustroy_bort" step="0.1"></td>
+                                    <td><input type="number" name="length_ustroy_bort" step="0.1"></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <!-- Таблица для Озеленения -->
+                        <table class="data-table hidden" id="table-ozelenenie">
+                            <thead>
+                                <tr>
+                                    <th>Тип работ</th>
+                                    <th>Площадь</th>
+                                    <th style="display: none;">Длина (скрыто)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Уничтожение</td>
+                                    <td><input type="number" name="square_destroy_ozel" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_destroy_ozel" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Устройство</td>
+                                    <td><input type="number" name="square_ustroy_ozel" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_ustroy_ozel" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Сохранение</td>
+                                    <td><input type="number" name="square_sohran_ozel" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_sohran_ozel" value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Восстановление</td>
+                                    <td><input type="number" name="square_vosstan_ozel" step="0.1"></td>
+                                    <td style="display: none;"><input type="hidden" name="length_vosstan_ozel" value="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Добавить запись </button>
+            </form>
+        </div>
+
+
+
+        <!-- Блок 2: Таблица входных данных -->
+<div class="table-section">
+    <!-- Кнопка для скрытия/показа блока -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Входные данные</h2>
+        <button type="button" id="toggle-table-btn" class="submit-btn"
+                style="margin-top: 0; padding: 8px 16px; font-size: 14px;">
+            Скрыть таблицу
+        </button>
+    </div>
+
+    <!-- Контейнер для фильтров и таблицы -->
+    <div id="table-container">
+        <!-- Фильтры для таблицы -->
+        <div class="filters" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="form-group">
+                    <label for="filter-element">Фильтр по элементу:</label>
+                    <input type="text" id="filter-element" placeholder="Поиск по элементу..." style="width: 250px;">
+                </div>
+                <div class="form-group">
+                    <label for="filter-property">Фильтр по характеристике:</label>
+                    <input type="text" id="filter-property" placeholder="Поиск по характеристике..." style="width: 250px;">
+                </div>
+            </div>
+        </div>
+
+        <table class="data-table" id="input-data-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Элемент площади</th>
+                    <th>Характеристика</th>
+                    <th>Площадь</th>
+                    <th>Длина</th>
+                    <th>Тип работ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in input_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.element_id.name_element }}</td>
+                    <td>{{ item.property_id.property_name }}</td>
+                    <td>{{ item.square|default:"" }}</td>
+                    <td>{{ item.length|default:"" }}</td>
+                    <td>{{ item.get_event_display|default:"" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">Нет данных</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const elementSelect = document.getElementById('element');
+            const propertySelect = document.getElementById('property');
+
+            // Получаем все таблицы
+            const tablePokritiya = document.getElementById('table-pokritiya');
+            const tableBortovoy = document.getElementById('table-bortovoy');
+            const tableOzelenenie = document.getElementById('table-ozelenenie');
+
+            // Скрываем все таблицы изначально
+            function hideAllTables() {
+                tablePokritiya.classList.add('hidden');
+                tableBortovoy.classList.add('hidden');
+                tableOzelenenie.classList.add('hidden');
+            }
+
+            elementSelect.addEventListener('change', function() {
+                const elementId = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+                const elementName = selectedOption.textContent;
+
+                // Сначала скрываем все таблицы
+                hideAllTables();
+
+                // Показываем соответствующую таблицу в зависимости от выбранного элемента
+                if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
+                    tablePokritiya.classList.remove('hidden');
+                } else if (elementName.includes('Бортовой камень')) {
+                    tableBortovoy.classList.remove('hidden');
+                } else if (elementName.includes('Озеленение')) {
+                    tableOzelenenie.classList.remove('hidden');
+                }
+
+                if (elementId) {
+                    // Запрос к API для получения характеристик
+                    fetch(`/api/properties/?element_id=${elementId}`)
+                        .then(response => response.json())
+                        .then(properties => {
+                            // Очищаем и заполняем выпадающий список характеристик
+                            propertySelect.innerHTML = '';
+                            propertySelect.disabled = false;
+
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.textContent = '-- Выберите характеристику --';
+                            propertySelect.appendChild(defaultOption);
+
+                            properties.forEach(prop => {
+                                const option = document.createElement('option');
+                                option.value = prop.id;
+                                option.textContent = prop.name;
+                                propertySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching properties:', error);
+                            propertySelect.disabled = true;
+                            propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
+                        });
+                } else {
+                    propertySelect.disabled = true;
+                    propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
+                    hideAllTables();
+                }
+            });
+
+            // Валидация формы
+            document.getElementById('dataForm').addEventListener('submit', function(e) {
+                if (!elementSelect.value || !propertySelect.value) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите элемент и характеристику');
+                }
+            });
+        });
+
+<!--        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    document.addEventListener('DOMContentLoaded', function() {
+        const elementSelect = document.getElementById('element');
+        const propertySelect = document.getElementById('property');
+
+        // Получаем все таблицы
+        const tablePokritiya = document.getElementById('table-pokritiya');
+        const tableBortovoy = document.getElementById('table-bortovoy');
+        const tableOzelenenie = document.getElementById('table-ozelenenie');
+
+        // Элементы для скрытия/показа таблицы
+        const toggleTableBtn = document.getElementById('toggle-table-btn');
+        const tableContainer = document.getElementById('table-container');
+
+        // Элементы фильтрации
+        const filterElement = document.getElementById('filter-element');
+        const filterProperty = document.getElementById('filter-property');
+        const dataTable = document.getElementById('input-data-table');
+        const tableRows = dataTable.querySelectorAll('tbody tr');
+
+        // Функция для переключения видимости таблицы
+        function toggleTable() {
+            if (tableContainer.style.display === 'none') {
+                tableContainer.style.display = 'block';
+                toggleTableBtn.textContent = 'Скрыть таблицу';
+            } else {
+                tableContainer.style.display = 'none';
+                toggleTableBtn.textContent = 'Показать таблицу';
+            }
+        }
+
+        // Обработчик клика по кнопке
+        toggleTableBtn.addEventListener('click', toggleTable);
+
+        // Функция фильтрации таблицы
+        function filterTable() {
+            const elementFilter = filterElement.value.toLowerCase();
+            const propertyFilter = filterProperty.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const elementCell = row.cells[1].textContent.toLowerCase();
+                const propertyCell = row.cells[2].textContent.toLowerCase();
+
+                const elementMatch = elementFilter === '' || elementCell.includes(elementFilter);
+                const propertyMatch = propertyFilter === '' || propertyCell.includes(propertyFilter);
+
+                if (elementMatch && propertyMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // События для фильтров
+        filterElement.addEventListener('input', filterTable);
+        filterProperty.addEventListener('input', filterTable);
+
+        // Скрываем все таблицы изначально
+        function hideAllTables() {
+            tablePokritiya.classList.add('hidden');
+            tableBortovoy.classList.add('hidden');
+            tableOzelenenie.classList.add('hidden');
+        }
+
+        elementSelect.addEventListener('change', function() {
+            const elementId = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            const elementName = selectedOption.textContent;
+
+            // Сначала скрываем все таблицы
+            hideAllTables();
+
+            // Показываем соответствующую таблицу в зависимости от выбранного элемента
+            if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
+                tablePokritiya.classList.remove('hidden');
+            } else if (elementName.includes('Бортовой камень')) {
+                tableBortovoy.classList.remove('hidden');
+            } else if (elementName.includes('Озеленение')) {
+                tableOzelenenie.classList.remove('hidden');
+            }
+
+            if (elementId) {
+                // Запрос к API для получения характеристик
+                fetch(`/api/properties/?element_id=${elementId}`)
+                    .then(response => response.json())
+                    .then(properties => {
+                        // Очищаем и заполняем выпадающий список характеристик
+                        propertySelect.innerHTML = '';
+                        propertySelect.disabled = false;
+
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = '-- Выберите характеристику --';
+                        propertySelect.appendChild(defaultOption);
+
+                        properties.forEach(prop => {
+                            const option = document.createElement('option');
+                            option.value = prop.id;
+                            option.textContent = prop.name;
+                            propertySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching properties:', error);
+                        propertySelect.disabled = true;
+                        propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
+                    });
+            } else {
+                propertySelect.disabled = true;
+                propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
+                hideAllTables();
+            }
+        });
+
+        // Валидация формы
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            if (!elementSelect.value || !propertySelect.value) {
+                e.preventDefault();
+                alert('Пожалуйста, выберите элемент и характеристику');
+            }
+        });
+    });
+<!--        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+    </script>
+</body>
+</html>
