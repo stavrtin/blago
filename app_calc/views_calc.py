@@ -1,11 +1,78 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from .models import InputData, Project, Element, Property
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Value, FloatField, Q
 from django.db.models.functions import Coalesce
-from django.contrib import messages  # Импортируем для сообщений об ошибках
+from .models import InputData, Project, Element, Property
+# from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .forms import SimpleUserCreationForm, CustomAuthenticationForm
 
 import pandas as pd
+
+
+def start_login_view(request):
+    """Представление для страницы входа"""
+    if request.user.is_authenticated:
+        return redirect('app_calc:projects_list')
+
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Добро пожаловать, {username}!')
+                return redirect('app_calc:projects_list')
+            else:
+                messages.error(request, 'Неверный логин или пароль')
+        else:
+            messages.error(request, 'Ошибка в форме входа')
+    else:
+        form = CustomAuthenticationForm()
+
+    context = {
+        'form': form
+    }
+    return render(request, 'start_login.html', context)
+
+
+def start_register_view(request):
+    """Представление для страницы регистрации"""
+    if request.user.is_authenticated:
+        return redirect('app_calc:projects_list')
+
+    if request.method == 'POST':
+        form = SimpleUserCreationForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, f'Аккаунт создан! Добро пожаловать, {user.username}!')
+                return redirect('app_calc:projects_list')
+            except Exception as e:
+                messages.error(request, f'Ошибка при создании пользователя: {str(e)}')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{error}')
+    else:
+        form = SimpleUserCreationForm()
+
+    context = {
+        'form': form
+    }
+    return render(request, 'start_register.html', context)
+
+
+def logout_view(request):
+    """Выход из системы"""
+    logout(request)
+    messages.success(request, 'Вы успешно вышли из системы')
+    return redirect('app_calc:start_login')
 
 
 def get_current_project(request, project_id=None):
@@ -24,21 +91,19 @@ def safe_float_conversion(value):
     except (TypeError, ValueError):
         return None
 
+@login_required
 def projects_list_view(request):
-    """
-    Представление для отображения списка всех проектов
-    """
-    projects = Project.objects.all().order_by('-created_at')
+    """Список проектов только текущего пользователя"""
+    projects = Project.objects.filter(user=request.user).order_by('-created_at')
 
     context = {
         'projects': projects
     }
     return render(request, 'start_proj.html', context)
 
+@login_required
 def new_proj_view(request):
-    """
-    Представление для создания нового проекта
-    """
+    """Создание нового проекта для текущего пользователя"""
     if request.method == 'POST':
         name = request.POST.get('name')
         total_square = request.POST.get('total_square')
@@ -50,11 +115,12 @@ def new_proj_view(request):
             return render(request, 'new_proj.html')
 
         try:
-            # Создаем новый проект
+            # Создаем новый проект для текущего пользователя
             project = Project.objects.create(
                 name=name,
                 total_square=float(total_square),
-                author=author
+                author=author,
+                user=request.user  # Привязываем проект к текущему пользователю
             )
             messages.success(request, f'Проект "{name}" успешно создан!')
             return redirect('app_calc:tab_start_view', project_id=project.id)
@@ -65,8 +131,9 @@ def new_proj_view(request):
 
     return render(request, 'new_proj.html')
 
+@login_required
 def tab_start_view(request, project_id):
-    project = get_current_project(request, project_id)
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
 
     if request.method == 'POST':
         element_id = request.POST.get('element')
@@ -260,13 +327,10 @@ def calculate_totals_balance(json_data):
 
     return [result_dict_now, result_dict_proj]
 
+@login_required
 def results_view(request, project_id):
-    # project = get_current_project(request)
-    project = get_current_project(request, project_id)
-
-
-
-
+    # Добавляем проверку, что проект принадлежит пользователю
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
 
     # -------------------Суммируем по Группам -----------------
     input_data_total = (InputData.objects
@@ -502,12 +566,12 @@ def results_view(request, project_id):
     return render(request, 'results_1.html', context)
     # return render(request, 'res_1.html', context)
 
-
+@login_required
 def v_edit_all_input_data(request, project_id):
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
     # ----------------- представление для перехода таб со ВСЕМИ веденными данными --
     # ----------------- для их дальнейшей корректировки -----------------------------
-
-    project = get_object_or_404(Project, pk=project_id)
 
     input_data = InputData.objects.filter(project_id=project_id).all()
 
@@ -518,24 +582,10 @@ def v_edit_all_input_data(request, project_id):
 
     return render(request, 'all_datatab_for_edit.html', context)
 
-# def v_edit_detal_input_data(request, record_id):
-#     # ----- представление для перехода к конкретной записи для корректировки -------------
-#
-#     # ----- выбрать бы целый комплект ---- Элемент площади и
-#     # project = get_object_or_404(Project, pk=project_id)
-#
-#     input_data = InputData.objects.filter(id=record_id).all()
-#
-#     context = {
-#                 'project': project,
-#                 'input_data': input_data,
-#              }
-#
-#     return render(request, 'all_datatab_for_edit.html', context)
-
-
+@login_required
 def edit_input_data(request, pk):
-    input_data = get_object_or_404(InputData, pk=pk)
+    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
+
 
     if request.method == 'POST':
         # Обрабатываем данные формы вручную
@@ -585,18 +635,18 @@ def edit_input_data(request, pk):
 
     })
 
-
+@login_required
 def confirm_delete_input_data(request, pk):
     """Страница подтверждения удаления"""
-    input_data = get_object_or_404(InputData, pk=pk)
+    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
     return render(request, 'confirm_delete.html', {
         'input_data': input_data
     })
 
-
+@login_required
 def delete_input_data(request, pk):
     """Непосредственное удаление"""
-    input_data = get_object_or_404(InputData, pk=pk)
+    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
     project_id = input_data.project_id.id
 
     try:

@@ -35,16 +35,29 @@
             border-radius: 8px;
             margin-bottom: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
             font-size: 28px;
             margin-bottom: 10px;
         }
-.nav-menu {
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .nav-menu {
             display: flex;
             justify-content: center;
             gap: 30px;
+            margin-top: 15px;
         }
 
         .nav-item {
@@ -124,6 +137,11 @@
                 padding: 6px 12px;
                 font-size: 14px;
             }
+
+            .user-info {
+                position: static;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -131,11 +149,12 @@
     <div class="container">
         <!-- Заголовок -->
         <div class="header">
+            <div class="user-info">
+                👤 {{ user.username }} | <a href="{% url 'app_calc:logout' %}" style="color: white; text-decoration: none;">Выйти</a>
+            </div>
             <h1>Система управления проектами</h1>
-<!--            <p>Список всех проектов</p>-->
-                        <nav class="nav-menu">
+            <nav class="nav-menu">
                 <a href="{% url 'app_calc:new_proj_view' %}" class="nav-item">Новый проект</a>
-
             </nav>
         </div>
 

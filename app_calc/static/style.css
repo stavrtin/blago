@@ -198,3 +198,151 @@ h3 {
         padding: 15px;
     }
 }
+
+.user-info {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.header {
+    position: relative;
+}
+
+/* Блок балансов в книжной ориентации */
+.balance-section {
+    background: #ecf0f1;
+    padding: 25px;
+    border-radius: 8px;
+    font-family: 'Times New Roman', Times, serif;
+    page-break-inside: avoid; /* Для печати */
+}
+
+.balance-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+}
+
+.balance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.balance-table th,
+.balance-table td {
+    padding: 8px 6px;
+    text-align: left;
+    border: 1px solid #333;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.balance-table th {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 11px;
+}
+
+.balance-table .subheader {
+    background: #34495e;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+/* Стили для строк категорий */
+.balance-table .category-header {
+    background: #bfd5f3 !important;
+    font-weight: bold;
+}
+
+.balance-table .category-header td {
+    font-weight: bold;
+    background: #bfd5f3;
+}
+
+.balance-table .subcategory td {
+    padding-left: 30px;
+    font-style: italic;
+}
+
+/* Выравнивание текста */
+.balance-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.balance-table .percentage {
+    font-style: italic;
+}
+
+/* Стили для строки общей площади */
+.balance-table tr:first-child td {
+    font-weight: bold;
+    background: #e8f4f8;
+}
+
+/* Адаптивность для книжной ориентации */
+@media (max-width: 1200px) {
+    .balance-table {
+        font-size: 11px;
+    }
+
+    .balance-table th,
+    .balance-table td {
+        padding: 6px 4px;
+    }
+}
+
+@media (max-width: 768px) {
+    .balance-section {
+        padding: 15px;
+    }
+
+    .balance-table {
+        font-size: 10px;
+    }
+
+    .balance-table th,
+    .balance-table td {
+        padding: 4px 3px;
+    }
+
+    .balance-table .subcategory td {
+        padding-left: 15px;
+    }
+}
+
+/* Стили для навигации в балансе */
+.balance-nav {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.balance-nav .nav-item {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Times New Roman', Times, serif;
+    transition: background 0.3s ease;
+}
+
+.balance-nav .nav-item:hover {
+    background: #2980b9;
+}

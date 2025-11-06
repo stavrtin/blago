@@ -1,11 +1,34 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User  # Стандартный пользователь
+
+
+# class CustomUser(AbstractUser):
+#     """Кастомная модель пользователя"""
+#     email = models.EmailField(unique=True, verbose_name='Email')
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата регистрации')
+#
+#     def __str__(self):
+#         return self.username
+#
+#     class Meta:
+#         db_table = 'custom_user'
+#         verbose_name = 'Пользователь'
+#         verbose_name_plural = 'Пользователи'
 
 
 class Project(models.Model):
-    name            = models.CharField(max_length=110, verbose_name='Название проекта', unique=True)
-    total_square    = models.FloatField(verbose_name='Общая площадь', default=0)
-    author          = models.CharField(max_length=100, verbose_name='Автор проекта')
-    created_at      = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    name = models.CharField(max_length=110, verbose_name='Название проекта', unique=True)
+    total_square = models.FloatField(verbose_name='Общая площадь', default=0)
+    author = models.CharField(max_length=100, verbose_name='Автор проекта')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    user = models.ForeignKey(
+        User,  # Используем стандартного User
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.name
@@ -14,7 +37,6 @@ class Project(models.Model):
         db_table = 'project_tab'
         verbose_name = 'Проект'
         ordering = ['-created_at']
-
 
 class Element(models.Model):
     name_element = models.CharField(max_length=110,
