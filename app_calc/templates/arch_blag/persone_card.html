@@ -1,0 +1,28 @@
+{% extends "home_3.html" %}
+
+<!--{% block title %} Вывод результатов: {% endblock %}-->
+
+{% block content %}
+
+
+    <fieldset>
+    <div>
+        <!-- Здесь будет основной контент страницы -->
+<div>
+        <!-- Вывод фото (если оно есть) -->
+
+
+        <p>Имя: {{ business_card.name }}</p>
+        <p>Компания: {{ business_card.company }}</p>
+        <p>Должность: {{ business_card.position }}</p>
+        <p>Телефон: {{ business_card.phone }}</p>
+        <p>Email: {{ business_card.email }}</p>
+        <p>Адрес: {{ business_card.address }}</p>
+        <p>Сайт: <a href="{{ business_card.website }}">{{ business_card.website }}</a></p>
+        <p>Дата создания: {{ business_card.created_at }}</p>
+        <p>Место встречи: {{ business_card.point_meet }}</p>
+        <p>Дата обновления: {{ business_card.helper }}</p>
+    </div>
+    </fieldset>
+    {% endblock %}
+

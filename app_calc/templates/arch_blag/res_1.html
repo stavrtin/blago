@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Итоги проекта</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 2100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 15px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: #3498db;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        .section-title {
+            text-align: center;
+            margin: 40px 0 25px 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .tables-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .table-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        .table-wrapper h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #2c3e50;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        /* Center alignment for all columns except first */
+        .data-table td:not(:first-child),
+        .data-table th:not(:first-child) {
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:hover {
+            background: #e8f4f8;
+        }
+
+        /* Balance Section */
+        .balance-section {
+            background: linear-gradient(135deg, #ecf0f1 0%, #dfe6e9 100%);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border: 1px solid #bdc3c7;
+        }
+
+        .balance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .balance-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #2c3e50;
+        }
+
+        .balance-table td {
+            padding: 14px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+        }
+
+        /* Center alignment for balance table */
+        .balance-table td:first-child,
+        .balance-table th:first-child {
+            text-align: left;
+        }
+
+        /* Category headers */
+        .category-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .category-header td {
+            color: white !important;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .subcategory {
+            background: #f8f9fa;
+        }
+
+        .subcategory td {
+            padding-left: 40px !important;
+            font-style: italic;
+            text-align: left !important;
+        }
+
+        .subcategory td:not(:first-child):not(:nth-child(2)) {
+            text-align: center !important;
+        }
+
+        /* Percentage cells */
+        .percentage {
+            font-weight: 600;
+            color: #27ae60;
+        }
+
+        /* Empty rows */
+        .empty-row {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .tables-container {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .table-wrapper {
+                padding: 15px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+
+        /* Table header styles */
+        .table-header-main {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .table-header-sub {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Italic for nested values */
+        .nested-value {
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Итоги по проекту "{{ project }}"</h1>
+            <nav class="nav-menu">
+                <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Ввод данных</a>
+                <a href="{% url 'app_calc:results_view' project.id %}" class="nav-item">Итоги</a>
+            </nav>
+        </header>
+
+        <!-- Ведомости -->
+        <section>
+            <h2 class="section-title">Ведомости</h2>
+
+            <div class="tables-container">
+                <!-- Ведомость демонтажа -->
+                <div class="table-wrapper">
+                    <h3>Ведомость демонтажа</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Наименование</th>
+                                <th>Площадь</th>
+                                <th>Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in demontaj_total %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><b>{{ item.element_id__name_element }}</b> - {{ item.property_id__property_name }}</td>
+                                <td>{{ item.total_square }}</td>
+                                <td>{{ item.event }}</td>
+                            </tr>
+                            {% empty %}
+                            {% for i in "123" %}
+                            <tr class="empty-row">
+                                <td>{{ forloop.counter }}</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Ведомость тротуаров -->
+                <div class="table-wrapper">
+                    <h3>Ведомость тротуаров</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Условное обозн.</th>
+                                <th>Наименование</th>
+                                <th>Площадь, кв.м</th>
+                                <th>Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in trotuar_dorojki_total %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>—</td>
+                                <td><b>{{ item.element_id__name_element }}</b> - {{ item.property_id__property_name }}</td>
+                                <td>{{ item.total_square }}</td>
+                                <td>{{ item.event }}</td>
+                            </tr>
+                            {% empty %}
+                            {% for i in "123456" %}
+                            <tr class="empty-row">
+                                <td>{{ forloop.counter }}</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Ведомость газонов -->
+                <div class="table-wrapper">
+                    <h3>Ведомость газонов / травяного покрова</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Наименование</th>
+                                <th>Площадь</th>
+                                <th>Сумма (устр+сохр+восст)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% regroup total_zelenl by property_id__property_name as properties_list %}
+                            {% for property in properties_list %}
+                            <tr style="background-color: #f0f0f0;">
+                                <td><b>{{ forloop.counter }}</b></td>
+                                <td><b>{{ property.grouper }}</b></td>
+                                <td>—</td>
+<!--                                <td>—</td>-->
+                            </tr>
+
+                            {% for item in property.list %}
+                            {% if item.event == 'уничтожение' %}
+                            <tr>
+                                <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
+                                <td style="padding-left: 30px;" class="nested-value">уничтожение</td>
+                                <td>{{ item.total_square }}</td>
+                                <td>—</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% for item in property.list %}
+                            {% if item.event == 'устройство' or item.event == 'сохранение' or item.event == 'восстановление' %}
+                            <tr>
+                                <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
+                                <td style="padding-left: 30px;" class="nested-value">{{ item.event }}</td>
+                                <td>{{ item.total_square }}</td>
+                                {% if forloop.first %}
+                                <td rowspan="{{ property.list|length }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
+                                    {% for key, value in calcilate_zelen_summ.items %}
+                                    {% if property.grouper == key %}<b>{{ value }}</b>{% endif %}
+                                    {% endfor %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" style="text-align: center;">Нет данных по озеленению</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Балансы -->
+        <section class="balance-section">
+            <h2 class="section-title">Сравнительные балансовые показатели территории проектирования</h2>
+
+            <table class="balance-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">№</th>
+                        <th rowspan="2">Наименование</th>
+                        <th colspan="2">Существующее положение</th>
+                        <th colspan="2">Проектное положение</th>
+                    </tr>
+                    <tr>
+                        <th class="table-header-sub">кв.м</th>
+                        <th class="table-header-sub">%</th>
+                        <th class="table-header-sub">кв.м</th>
+                        <th class="table-header-sub">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Общая площадь -->
+                    <tr>
+                        <td>1</td>
+                        <td>Общая площадь</td>
+                        <td>{{ total_area_now }}</td>
+                        <td>100,00 %</td>
+                        <td>{{ total_area_proj }}</td>
+                        <td>100,00 %</td>
+                    </tr>
+
+                    <!-- Здания и сооружения -->
+                    <tr class="category-header">
+                        <td><b>2</b></td>
+                        <td>Здания и сооружения</td>
+                        <td>{{ buildings_total_now }}</td>
+                        <td class="percentage">{{ buildings_percentage_now|floatformat:2 }}%</td>
+                        <td>{{ buildings_total_proj }}</td>
+                        <td class="percentage">{{ buildings_percentage_proj|floatformat:2 }}%</td>
+                    </tr>
+
+                    {% for key, value in json_data_now_and_proj.items %}
+                    {% if "Здания и сооружения" in key %}
+                    <tr class="subcategory">
+                        <td></td>
+                        <td class="nested-value">{{ key|cut:"Здания и сооружения." }}</td>
+                        <td>{{ value.0 }}</td>
+                        <td>—</td>
+                        <td>{{ value.1 }}</td>
+                        <td>—</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+
+                    <!-- Покрытия -->
+                    <tr class="category-header">
+                        <td><b>3</b></td>
+                        <td>Покрытия</td>
+                        <td>{{ coverings_total_now }}</td>
+                        <td class="percentage">{{ coverings_percentage_now|floatformat:2 }}%</td>
+                        <td>{{ coverings_total_proj }}</td>
+                        <td class="percentage">{{ coverings_percentage_proj|floatformat:2 }}%</td>
+                    </tr>
+
+                    {% for key, value in json_data_now_and_proj.items %}
+                    {% if "Покрытия" in key %}
+                    <tr class="subcategory">
+                        <td></td>
+                        <td class="nested-value">{{ key|cut:"Покрытия." }}</td>
+                        <td>{{ value.0 }}</td>
+                        <td>—</td>
+                        <td>{{ value.1 }}</td>
+                        <td>—</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+
+                    <!-- Озеленение -->
+                    <tr class="category-header">
+                        <td>4</td>
+                        <td>Площадь озеленения, в том числе...</td>
+                        <td>{{ landscaping_total_now }}</td>
+                        <td class="percentage">{{ landscaping_percentage_now|floatformat:2 }}%</td>
+                        <td>{{ landscaping_total_proj }}</td>
+                        <td class="percentage">{{ landscaping_percentage_proj|floatformat:2 }}%</td>
+                    </tr>
+
+                    {% for key, value in json_data_now_and_proj.items %}
+                    {% if "Озеленение (обводнение)." in key %}
+                    <tr class="subcategory">
+                        <td></td>
+                        <td class="nested-value">{{ key|cut:"Озеленение (обводнение)." }}</td>
+                        <td>{{ value.0 }}</td>
+                        <td>—</td>
+                        <td>{{ value.1 }}</td>
+                        <td>—</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+
+                    <!-- Бортовой камень -->
+                    <tr class="category-header">
+                        <td>5</td>
+                        <td>Бортовой камень</td>
+                        <td>{{ stone_total_now }}</td>
+                        <td class="percentage">{{ stone_percentage_now|floatformat:2 }}%</td>
+                        <td>{{ stone_total_proj }}</td>
+                        <td class="percentage">{{ stone_percentage_proj|floatformat:2 }}%</td>
+                    </tr>
+
+                    {% for key, value in json_data_now_and_pro

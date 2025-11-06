@@ -1,0 +1,564 @@
+<!--работает сохраненеи даных из таблиц (все подряд)-->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система ввода данных - {{ project.name }}</title>
+<style>
+  * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: #3498db;
+            transition: background 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: #2980b9;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            align-self: center;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Table Section */
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Responsive */<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система ввода данных - {{ project.name }}</title>
+<style>
+  * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: #3498db;
+            transition: background 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: #2980b9;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .input-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            align-self: center;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Table Section */
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-group {
+                min-width: auto;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .input-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+tab_start.html
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Страница ввода данных по проекту </h1>
+            <h2 style="color: #ecf0f1; margin-bottom: 15px;">Проект:      {{ project.name }}</h2>
+            <nav class="nav-menu">
+                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
+<!--                <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Ввод данных</a>-->
+                <a href="{% url 'app_calc:results_view' project.id %}" class="nav-item">Просмотр итогов</a>
+
+            </nav>
+        </header>
+
+        <!-- Блок 1: Ввод данных -->
+        <div class="input-section">
+<!--            <h2>Ввод данных</h2>-->
+            <form method="POST" class="input-form" id="dataForm">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="element">Элемент площади:</label>
+                        <select id="element" name="element" required>
+                            <option value="">-- Выберите элемент --</option>
+                            {% for element in elements %}
+                            <option value="{{ element.id }}">{{ element.name_element }}</option>
+                            {% endfor %}
+                        </select>
+
+                    <div class="form-group">
+                        <br>
+                        <br>
+                        <label for="property">Характеристика:</label>
+                        <select id="property" name="property" required disabled>
+                            <option value="">-- Сначала выберите элемент --</option>
+                        </select>
+                    </div>
+                    </div>
+
+
+                <div class="form-row">
+                    <div class="form-group">
+
+                        <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Тип работ </th>
+                        <th>Площадь  </th>
+                        <th>Длина</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Сохранение</td>
+                        <td><input type="number" id="square_sohran" name="square_sohran" step="0.01"></td>
+                        <td><input type="number" id="length_sohran" name="length_sohran" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Демонтаж</td>
+                        <td><input type="number" id="square_demon" name="square_demon" step="0.01"></td>
+                        <td><input type="number" id="length_demon" name="length_demon" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Ремонт</td>
+                        <td><input type="number" id="square_remont" name="square_remont" step="0.01"></td>
+                        <td><input type="number" id="length_remont" name="length_remont" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Устройство</td>
+                        <td><input type="number" id="square_ustroy" name="square_ustroy" step="0.01"></td>
+                        <td><input type="number" id="length_ustroy" name="length_ustroy" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Уничтожение</td>
+                        <td><input type="number" id="square_destroy" name="square_destroy" step="0.01"></td>
+                        <td><input type="number" id="length_destroy" name="length_destroy" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Восстановление</td>
+                        <td><input type="number" id="square_vosstan" name="square_vosstan" step="0.01"></td>
+                        <td><input type="number" id="length_vosstan" name="length_vosstan" step="0.01"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+                     </div>
+
+                </div>
+
+
+                </div>
+                <button type="submit" class="submit-btn">Добавить</button>
+            </form>
+        </div>
+
+        <!-- Блок 2: Таблица входных данных -->
+        <div class="table-section">
+            <h2>Входные данные</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Элемент площади</th>
+                        <th>Характеристика</th>
+                        <th>Площадь</th>
+                        <th>Длина</th>
+                        <th>Тип работ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in input_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.element_id.name_element }}</td>
+                        <td>{{ item.property_id.property_name }}</td>
+                        <td>{{ item.square|default:"" }}</td>
+                        <td>{{ item.length|default:"" }}</td>
+                        <td>{{ item.get_event_display|default:"" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Нет данных</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const elementSelect = document.getElementById('element');
+            const propertySelect = document.getElementById('property');
+
+            elementSelect.addEventListener('change', function() {
+                const elementId = this.value;
+
+                if (elementId) {
+                    // Запрос к API для получения характеристик
+                    fetch(`/api/properties/?element_id=${elementId}`)
+                        .then(response => response.json())
+                        .then(properties => {
+                            // Очищаем и заполняем выпадающий список характеристик
+                            propertySelect.innerHTML = '';
+                            propertySelect.disabled = false;
+
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.textContent = '-- Выберите характеристику --';
+                            propertySelect.appendChild(defaultOption);
+
+                            properties.forEach(prop => {
+                                const option = document.createElement('option');
+                                option.value = prop.id;
+                                option.textContent = prop.name;
+                                propertySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching properties:', error);
+                            propertySelect.disabled = true;
+                            propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
+                        });
+                } else {
+                    propertySelect.disabled = true;
+                    propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
+                }
+            });
+
+            // Валидация формы
+            document.getElementById('dataForm').addEventListener('submit', function(e) {
+                if (!elementSelect.value || !propertySelect.value) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите элемент и характеристику');
+                }
+            });
+        });
+    </script>
+</body>

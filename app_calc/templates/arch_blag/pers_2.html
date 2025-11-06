@@ -1,0 +1,235 @@
+{% extends "home_3.html" %}
+
+{% block title %}
+        <div style="text-align: right; margin-top: -30px; margin-right: 30px;">
+            Вы авторизованы как " {{user}} "
+            <a href="{% url 'app_viz:logout' %}" >выход</a>
+         </div>
+<div data-v-634f1aae="" class="mb-8 flex-y-center page-header__title">
+    <h4 data-v-634f1aae="" class="mb-0" style="display: inline;">Визитка</h4>
+    <span data-v-634f1aae="" class="badge-text_0" style="display: inline;">{{ business_card.name }}</span>
+</div>
+<br>
+{% endblock %}
+
+{% block content %}
+pers_2.html
+<form method="POST">
+    {% csrf_token %}
+    
+    <div class="card-details-wrapper">
+        <!-- Левая часть с данными -->
+        <div class="details-column">
+            <div class="details-container">
+                <div class="field-label">Имя:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.name }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Компания:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.company }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Должность:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.position }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Телефон:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.phone }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Email:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.email }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Адрес:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.address }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Сайт:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value"><a href="{{ business_card.website }}" target="_blank">{{ business_card.website }}</a></div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Дата создания:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.created_at|date:"d.m.Y" }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Место встречи:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.point_meet }}</div>
+            </div>
+            <div class="details-container">
+                <div class="field-label">Помощник:</div>
+                <div class="vertical-line"></div>
+                <div class="field-value">{{ business_card.helper }}</div>
+            </div>
+        </div>
+        
+        <!-- Правая часть с фотографией -->
+        <div class="photo-column">
+            {{ business_card.photo.url }}
+            <div class="photo-container">
+                {% if business_card.photo %}
+                <img src="{{ business_card.photo.url }}"
+                     alt="Фото {{ business_card.name }}"
+                     class="card-photo">
+                {% else %}
+                <div class="no-photo">
+                    <i class="fas fa-camera"></i>
+                    <p>Фото отсутствует</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a href="{% url 'app_viz:v_home' %}" class="btn back-btn">Назад</a>
+        <button name="btn_edit" type="submit" class="btn save-btn">Внести правки</button>
+        <button name="btn_delete" type="submit" class="btn cancel-btn">Удалить</button>
+    </div>
+</form>
+
+<style>
+.card-details-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.details-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.photo-column {
+    flex: 0 0 1000px;
+    position: sticky;
+    top: 40px;
+}
+
+.details-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    min-height: 40px;
+}
+
+.field-label {
+    flex: 0 0 120px;
+    font-weight: 600;
+    color: #555;
+    text-align: right;
+}
+
+.vertical-line {
+    width: 1px;
+    height: 30px;
+    background: #ddd;
+    margin: 0 10px;
+}
+
+.field-value {
+    flex: 1;
+    color: #333;
+}
+
+.field-value a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.field-value a:hover {
+    text-decoration: underline;
+}
+
+.photo-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-photo {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-photo {
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.no-photo i {
+    font-size: 48px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.no-photo p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.button-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.save-btn {
+    background: #28a745;
+    color: white;
+}
+
+.cancel-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+</style>
+
+<!-- Подключаем Font Awesome для иконки камеры -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Итоговая таблица площадей</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: Arial, sans-serif;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .category-header {
+            background-color: #e8f4f8;
+            font-weight: bold;
+        }
+
+        .subcategory {
+            background-color: #f9f9f9;
+        }
+
+        .percentage {
+            font-weight: bold;
+            color: #2c5282;
+        }
+
+        .total-row {
+            background-color: #d1ecf1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Итоговая таблица площадей</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Показатель</th>
+                <th>Площадь (кв.м)</th>
+                <th>Процент (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                {% if item.type == 'header' %}
+                    <tr class="category-header">
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.total_area }}</td>
+                        <td class="percentage">{{ item.percentage }}%</td>
+                    </tr>
+                {% else %}
+                    <tr class="subcategory">
+                        <td style="padding-left: 30px;">{{ item.name }}</td>
+                        <td>{{ item.area }}</td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+
+            <tr class="total-row">
+                <td><strong>Общая площадь</strong></td>
+                <td><strong>{{ total_area }}</strong></td>
+                <td><strong>100%</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
