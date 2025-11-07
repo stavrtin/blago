@@ -20,7 +20,7 @@ from django.contrib.auth.models import User  # Стандартный польз
 class Project(models.Model):
     name = models.CharField(max_length=110, verbose_name='Название проекта', unique=True)
     total_square = models.FloatField(verbose_name='Общая площадь', default=0)
-    author = models.CharField(max_length=100, verbose_name='Автор проекта')
+    author = models.CharField(max_length=100, verbose_name='Автор проекта', default='')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     user = models.ForeignKey(
         User,  # Используем стандартного User

@@ -396,7 +396,7 @@ tab_start.html
 <div class="table-section">
     <!-- Кнопка для скрытия/показа блока -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Входные данные</h2>
+        <h2>Внесенные сведения по площадям</h2>
         <button type="button" id="toggle-table-btn" class="submit-btn"
                 style="margin-top: 0; padding: 8px 16px; font-size: 14px;">
             Скрыть таблицу
@@ -428,6 +428,7 @@ tab_start.html
                     <th>Площадь</th>
                     <th>Длина</th>
                     <th>Тип работ</th>
+                    <th>Внести правки</th>
                 </tr>
             </thead>
             <tbody>
@@ -439,10 +440,11 @@ tab_start.html
                     <td>{{ item.square|default:"" }}</td>
                     <td>{{ item.length|default:"" }}</td>
                     <td>{{ item.get_event_display|default:"" }}</td>
+
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align: center;">Нет данных</td>
+                    <td colspan="7" style="text-align: center;">Нет данных</td>
                 </tr>
                 {% endfor %}
             </tbody>

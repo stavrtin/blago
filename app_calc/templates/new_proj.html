@@ -180,6 +180,7 @@
     </style>
 </head>
 <body>
+new_proj.html
     <div class="container">
         <!-- Заголовок -->
         <div class="header">
@@ -222,11 +223,11 @@
                            placeholder="Введите общую площадь">
                 </div>
 
-                <div class="form-group">
-                    <label for="author">Автор проекта *</label>
-                    <input type="text" id="author" name="author" required
-                           placeholder="Введите имя автора">
-                </div>
+<!--                <div class="form-group">-->
+<!--                    <label for="author">Автор проекта *</label>-->
+<!--                    <input type="text" id="author" name="author" -->
+<!--                           placeholder="Введите имя автора">-->
+<!--                </div>-->
 
                 <button type="submit" class="submit-btn">Создать проект</button>
             </form>
@@ -234,27 +235,27 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Валидация формы
-            const form = document.querySelector('.input-form');
-            form.addEventListener('submit', function(e) {
-                const name = document.getElementById('name').value.trim();
-                const totalSquare = document.getElementById('total_square').value;
-                const author = document.getElementById('author').value.trim();
+<!--        document.addEventListener('DOMContentLoaded', function() {-->
+<!--            // Валидация формы-->
+<!--            const form = document.querySelector('.input-form');-->
+<!--            form.addEventListener('submit', function(e) {-->
+<!--                const name = document.getElementById('name').value.trim();-->
+<!--                const totalSquare = document.getElementById('total_square').value;-->
+<!--                const author = document.getElementById('author').value.trim();-->
 
-                if (!name || !totalSquare || !author) {
-                    e.preventDefault();
-                    alert('Пожалуйста, заполните все обязательные поля');
-                    return false;
-                }
+<!--                if (!name || !totalSquare || !author) {-->
+<!--                    e.preventDefault();-->
+<!--                    alert('Пожалуйста, заполните все обязательные поля');-->
+<!--                    return false;-->
+<!--                }-->
 
-                if (parseFloat(totalSquare) <= 0) {
-                    e.preventDefault();
-                    alert('Площадь должна быть положительным числом');
-                    return false;
-                }
-            });
-        });
+<!--                if (parseFloat(totalSquare) <= 0) {-->
+<!--                    e.preventDefault();-->
+<!--                    alert('Площадь должна быть положительным числом');-->
+<!--                    return false;-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
     </script>
 </body>
 </html>

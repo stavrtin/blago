@@ -107,10 +107,12 @@ def new_proj_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         total_square = request.POST.get('total_square')
-        author = request.POST.get('author')
+        # author = request.POST.get('author')
 
         # Валидация данных
-        if not all([name, total_square, author]):
+        if not all([name, total_square,
+                    # author
+                    ]):
             messages.error(request, 'Все поля обязательны для заполнения')
             return render(request, 'new_proj.html')
 
@@ -119,7 +121,7 @@ def new_proj_view(request):
             project = Project.objects.create(
                 name=name,
                 total_square=float(total_square),
-                author=author,
+                author=request.user,
                 user=request.user  # Привязываем проект к текущему пользователю
             )
             messages.success(request, f'Проект "{name}" успешно создан!')
@@ -407,7 +409,6 @@ def results_view(request, project_id):
     # destroyed_properties = set()
     destroyed_properties = []
     for item in total_zelenl:
-        if item['event'] == 'уничтожение':
             # destroyed_properties.add(item['property_id__property_name'])
             destroyed_properties.append(item['property_id__property_name'])
 
@@ -585,7 +586,6 @@ def v_edit_all_input_data(request, project_id):
 @login_required
 def edit_input_data(request, pk):
     input_data = get_object_or_404(InputData, pk=pk, user=request.user)
-
 
     if request.method == 'POST':
         # Обрабатываем данные формы вручную
