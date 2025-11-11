@@ -303,7 +303,7 @@ def marker_destroy(data_from_ozelenen):
 
 def calculate_totals_balance(json_data):
     df_start = pd.DataFrame(json_data)
-    df_bez_zelet_now = df_start.loc[df_start.event.isin(['сохранение', 'демонтаж', 'ремонт'])
+    df_bez_zelet_now = df_start.loc[df_start.event.isin(['сохранение', 'демонтаж', 'ремонт', 'установка'])
                                     & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
     df_zelen_now = df_start.loc[df_start.event.isin(['сохранение','уничтожение','восстановление'])
@@ -311,10 +311,10 @@ def calculate_totals_balance(json_data):
 
     df_now = pd.concat([df_bez_zelet_now, df_zelen_now])
 
-    df_bez_zelet_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','ремонт'])
+    df_bez_zelet_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','ремонт', 'установка'])
                              & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
-    df_zelen_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','восстановление'])
+    df_zelen_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','восстановление', 'установка'])
                              & df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
     df_proj = pd.concat([df_bez_zelet_proj, df_zelen_proj])
@@ -387,7 +387,9 @@ def results_view(request, project_id):
 
 
     # --------------------- Тротуары и площадки ---------------
-    trotuar_filter = Q(project_id=project) & (Q(event='устройство') | Q(event='ремонт')) & (Q(element_id__name_element='Покрытия') | Q(element_id__name_element='Бортовой камень'))
+    trotuar_filter = (Q(project_id=project)
+                      & (Q(event='устройство') | Q(event='ремонт'))
+                      & (Q(element_id__name_element='Покрытия') | Q(element_id__name_element='Бортовой камень')))
     trotuar_dorojki_total = (InputData.objects
                              .filter(trotuar_filter)
                              .values('element_id__name_element', 'property_id__property_name', 'event')
@@ -566,6 +568,409 @@ def results_view(request, project_id):
     }
     return render(request, 'results_1.html', context)
     # return render(request, 'res_1.html', context)
+
+
+# ---------------------------------------------------------Сравнительные балансы ----------------------------------
+@login_required
+def results_balance_view(request, project_id):
+    # Добавляем проверку, что проект принадлежит пользователю
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # -------------------Суммируем по Группам -----------------
+    input_data_total = (InputData.objects
+                        .filter(project_id=project)
+                        .values('element_id__name_element', 'property_id__property_name', 'event')
+                        .annotate(
+                            total_square=Sum('square'),
+                            total_length=Sum('length')
+                        ).order_by('element_id__name_element', 'property_id__property_name'))
+    input_data_total = calculate_totals(input_data_total)
+
+    # ------------------------------сбор БАЛАНСОВ всего, что есть , с группировкой для упрщен --1нач
+    # -------------------- пробуем json для вывода Балансов -*-----------------
+    all_input_data = (InputData.objects
+                    .filter(project_id=project)
+                    .select_related('element_id', 'property_id')
+                    .values(
+        'element_id__name_element',
+        'property_id__property_name',
+        'event'
+    )
+                    .annotate(
+        total_square=Coalesce(Sum('square'), Value(0.0, output_field=FloatField())),
+        total_length=Coalesce(Sum('length'), Value(0.0, output_field=FloatField()))
+    )
+                    .order_by('element_id__name_element', 'property_id__property_name', 'event')
+                    )
+
+    all_input_data = list(all_input_data)
+
+    # --------------- баланс - СУЩЕСТВУЮЩИЙ и ПРОЕКТИРУЕМЫЙ ---------------
+    json_now_balance = calculate_totals_balance(all_input_data)[0]
+    json_project_balance = calculate_totals_balance(all_input_data)[1]
+
+    # ----------------------------------СУЩЕСТВУЮЩИЙ-------------------------------
+    # -----------------------Рассчитываем суммы по категориям СУЩЕСТВУЮЩИЙ
+    buildings_total_now = sum([v for k, v in json_now_balance.items() if k.startswith('Здания и сооружения')])
+    coverings_total_now = sum([v for k, v in json_now_balance.items() if k.startswith('Покрытия')])
+    landscaping_total_now = sum([v for k, v in json_now_balance.items() if k.startswith('Озеленение (обводнение).')])
+    stone_total_now = sum([v for k, v in json_now_balance.items() if k.startswith('Бортовой камень')])
+
+    total_area_now = buildings_total_now + coverings_total_now + landscaping_total_now + stone_total_now
+
+    # Рассчитываем проценты----СУЩЕСТВУЮЩИЙ --------
+    buildings_percentage_now = (buildings_total_now / total_area_now * 100) if total_area_now else 0
+    coverings_percentage_now = (coverings_total_now / total_area_now * 100) if total_area_now else 0
+    landscaping_percentage_now = (landscaping_total_now / total_area_now * 100) if total_area_now else 0
+    stone_percentage_now = (stone_total_now / total_area_now * 100) if total_area_now else 0
+
+
+    # ----------------------------------ПРОЕКТНЫЙ-------------------------------
+    # -----------------------Рассчитываем суммы по категориям ПРОЕКТНЫЙ
+    buildings_total_proj = sum([v for k, v in json_project_balance.items() if k.startswith('Здания и сооружения')])
+    coverings_total_proj = sum([v for k, v in json_project_balance.items() if k.startswith('Покрытия')])
+    landscaping_total_proj = sum([v for k, v in json_project_balance.items() if k.startswith('Озеленение (обводнение).')])
+    stone_total_proj = sum([v for k, v in json_project_balance.items() if k.startswith('Бортовой камень')])
+
+    total_area_proj = buildings_total_proj + coverings_total_proj + landscaping_total_proj + stone_total_proj
+
+    # Рассчитываем проценты----ПРОЕКТНЫЙ --------
+    buildings_percentage_proj = (buildings_total_proj / total_area_proj * 100) if total_area_proj else 0
+    coverings_percentage_proj = (coverings_total_proj / total_area_proj * 100) if total_area_proj else 0
+    landscaping_percentage_proj = (landscaping_total_proj / total_area_proj * 100) if total_area_proj else 0
+    stone_percentage_proj = (stone_total_proj / total_area_proj * 100) if total_area_proj else 0
+
+
+    # ------------------------------сбор всего, что есть , с группировкой для упрщен --1кон
+    delta_now_proj = total_area_now - total_area_proj
+
+    # --------------- Собранный json для формирования БАЛАНСОВ ----------
+    unique_name_objects = list(set(json_now_balance.keys()) | set(json_project_balance.keys()))
+    # -----------------создаем словарь, в котром в значении - список
+    dict_now_proj = {key: [None, None] for key in unique_name_objects}
+
+
+    # -------------------Наполняем словарь значениями из сууществующих -------
+    for name_obj in unique_name_objects:
+        if name_obj in list(set(json_now_balance.keys())):
+            # print(dict1.get(name_obj))
+            dict_now_proj[name_obj][0] = json_now_balance.get(name_obj)
+        else:
+            dict_now_proj[name_obj][0] = None
+
+    # -------------------------Наполняем словарь значениями  для проектных
+
+    for name_obj in unique_name_objects:
+        if name_obj in list(set(json_project_balance.keys())):
+            # print(dict1.get(name_obj))
+            dict_now_proj[name_obj][1] = json_project_balance.get(name_obj)
+        else:
+            dict_now_proj[name_obj][1] = None
+
+    # input_square =  (Project.objects.filter(project_id=project).values('total_square'))
+    input_square =  ((Project.objects.filter(id=project.id)
+                     .values('total_square'))
+                     .first())
+
+    context = {
+        'project': project,
+        'input_data_now': json_now_balance,
+        'input_data_project': json_project_balance,
+        'input_data_total': input_data_total,
+
+        # -----------------------------вывод в балансы ---------------
+        'json_data_now_and_proj': dict_now_proj,
+        # --------------------------Существующ -----------------------
+        'json_now_balance': json_now_balance,
+        'buildings_total_now': buildings_total_now,
+        'coverings_total_now': coverings_total_now,
+        'landscaping_total_now': landscaping_total_now,
+        'stone_total_now': stone_total_now,
+
+        'buildings_percentage_now': buildings_percentage_now,
+        'coverings_percentage_now': coverings_percentage_now,
+        'landscaping_percentage_now': landscaping_percentage_now,
+        'stone_percentage_now': stone_percentage_now,
+
+        'total_area_now': total_area_now,
+
+        # --------------------------Проектн -----------------------
+        'json_project_balance':json_project_balance,
+        'buildings_total_proj':buildings_total_proj,
+        'coverings_total_proj':coverings_total_proj,
+        'landscaping_total_proj':landscaping_total_proj,
+        'stone_total_proj':stone_total_proj,
+
+        'buildings_percentage_proj':buildings_percentage_proj,
+        'coverings_percentage_proj':coverings_percentage_proj,
+        'landscaping_percentage_proj':landscaping_percentage_proj,
+        'stone_percentage_proj':stone_percentage_proj,
+
+        'total_area_proj':total_area_proj,
+        'delta_now_proj':delta_now_proj,
+        'input_square':input_square,
+
+
+    }
+    return render(request, 'results_balance.html', context)
+    # return render(request, 'res_1.html', context)
+
+
+# --------------------------------------------------------------- Демонтаж ------------------------------------------
+@login_required
+def results_demontaj_view(request, project_id):
+    # Добавляем проверку, что проект принадлежит пользователю
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # --------------------- Демонтаж ---------------
+    demontaj_filter = Q(project_id=project) & (Q(event='демонтаж') | Q(event='ремонт')) & (Q(element_id__name_element='Покрытия') | Q(element_id__name_element='Бортовой камень'))
+    demontaj_total = (InputData.objects
+                      .filter(demontaj_filter)
+                      .values('element_id__name_element', 'property_id__property_name', 'event')
+                      .annotate(
+                          total_square=Coalesce(Sum('square', default=0.0), Value(0.0, output_field=FloatField())),
+                          total_length=Coalesce(Sum('length', default=0.0), Value(0.0, output_field=FloatField())),
+                      ).order_by('element_id__name_element', 'property_id__property_name'))
+
+    # Группируем данные по категориям (замена defaultdict)
+    categories_dict = {}
+    counter = 1
+
+    for item in demontaj_total:
+        category_name = item['element_id__name_element']
+        # # Создаем запись для категории, если ее еще нет
+        if category_name not in categories_dict:
+            categories_dict[category_name] = []
+
+        # Добавляем элемент в категорию (только площадь, без длины)
+        item_data = {
+            'number': str(counter),
+            # 'name': f"{category_name} - {item['property_id__property_name']}",
+            'name': f"{item['property_id__property_name']}",
+            'area': f"{item['total_square']:.1f}",
+            'note': item['event']
+        }
+        categories_dict[category_name].append(item_data)
+        counter += 1
+
+    # Преобразуем в структуру для шаблона
+    categories = [{'name': name, 'items': items} for name, items in categories_dict.items()]
+
+    context = {
+        'project': project,
+        'categories':categories,
+    }
+    return render(request, 'results_demontaj.html', context)
+
+
+
+@login_required
+def results_trotuar_view(request, project_id):
+    """Ведомость тротуаров"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # --------------------- Тротуары и площадки ---------------
+    trotuar_filter =    (
+                           Q(project_id=project)
+                        & (Q(event='устройство') | Q(event='ремонт') | Q(event='установка') | Q(event='сохранение')  )
+                        & (Q(element_id__name_element='Покрытия') | Q(element_id__name_element='Бортовой камень'))
+                        )
+
+    trotuar_dorojki_total = (InputData.objects
+                             .filter(trotuar_filter)
+                             .values('element_id__name_element', 'property_id__property_name', 'event')
+                             .annotate(
+                                 total_square=Coalesce(Sum('square', default=0.0), Value(0.0, output_field=FloatField())),
+                                 total_length=Coalesce(Sum('length', default=0.0), Value(0.0, output_field=FloatField())),
+                             ).order_by('element_id__name_element', 'property_id__property_name'))
+
+    # Группируем данные по категориям (замена defaultdict)
+    categories_dict = {}
+    counter = 1
+
+    for item in trotuar_dorojki_total:
+        category_name = item['element_id__name_element']
+        # # Создаем запись для категории, если ее еще нет
+        if category_name not in categories_dict:
+            categories_dict[category_name] = []
+
+        # Добавляем элемент в категорию (только площадь, без длины)
+        item_data = {
+            'number': str(counter),
+            # 'name': f"{category_name} - {item['property_id__property_name']}",
+            'name': f"{item['property_id__property_name']}",
+            'area': f"{item['total_square']:.1f}",
+            'note': item['event']
+        }
+        categories_dict[category_name].append(item_data)
+        counter += 1
+
+    # Преобразуем в структуру для шаблона
+    categories = [{'name': name, 'items': items} for name, items in categories_dict.items()]
+
+    context = {
+        'project': project,
+        'categories':categories,
+    }
+
+    context = {
+        'project': project,
+        # 'trotuar_dorojki_total': trotuar_dorojki_total,
+        # 'trotuar_filter': trotuar_filter,
+        'categories': categories,
+        # ... другие переменные для тротуаров
+    }
+    return render(request, 'results_trotuar.html', context)
+
+
+# @login_required
+# def results_gazon_view(request, project_id):
+#     """Ведомость газонов"""
+#     # Добавляем проверку, что проект принадлежит пользователю
+#     project = get_object_or_404(Project, pk=project_id, user=request.user)
+#
+#     # -------------------Суммируем по Группам -----------------
+#     input_data_total = (InputData.objects
+#                         .filter(project_id=project)
+#                         .values('element_id__name_element', 'property_id__property_name', 'event')
+#                         .annotate(
+#         total_square=Sum('square'),
+#         total_length=Sum('length')
+#     ).order_by('element_id__name_element', 'property_id__property_name'))
+#     input_data_total = calculate_totals(input_data_total)
+#
+#     # ------------Озеленения -----------------
+#     total_zelenl = (InputData.objects.filter(project_id=project, element_id__name_element='Озеленение (обводнение)')
+#                     .values('property_id__property_name', 'event')
+#                     .annotate(total_square=Sum('square'))
+#                     .order_by('property_id__property_name'))
+#
+#     destroyed_properties = []
+#     for item in total_zelenl:
+#         # destroyed_properties.add(item['property_id__property_name'])
+#         destroyed_properties.append(item['property_id__property_name'])
+#
+#     for item in total_zelenl:
+#         property_name = item['property_id__property_name']
+#         if property_name in destroyed_properties:
+#             # Если свойство есть в множестве уничтоженных, ставим -1, иначе 0
+#             # dict_new[property_name] = -1 if property_name in destroyed_properties else 0
+#             item['mark_of_destroy'] = -1  # если есть "уничтожение"
+#         else:
+#             item['mark_of_destroy'] = 0  # если есть "уничтожение"
+#
+#     # ---------------------------------------------------------------таблица ГАЗОНОВ н-
+#
+#     zelen_summ = calcilate_zelen_summ(total_zelenl)  # -----вычислим суммы для озеленения
+#
+#     # Дополнительно вычисляем количество валидных строк для каждого свойства
+#     property_valid_counts = {}
+#     for item in total_zelenl:
+#         prop_name = item['property_id__property_name']
+#         if prop_name not in property_valid_counts:
+#             property_valid_counts[prop_name] = 0
+#
+#         # Считаем только устройство, сохранение, восстановление
+#         if item['event'] in ['устройство', 'сохранение', 'восстановление']:
+#             property_valid_counts[prop_name] += 1
+#
+#     # Создаем список свойств с дополнительной информацией
+#     properties_with_counts = []
+#     for property_group in total_zelenl.values('property_id__property_name').distinct():
+#         prop_name = property_group['property_id__property_name']
+#         properties_with_counts.append({
+#             'name': prop_name,
+#             'items': [item for item in total_zelenl if item['property_id__property_name'] == prop_name],
+#             'valid_count': property_valid_counts.get(prop_name, 0),
+#             'sum_value': calcilate_zelen_summ.get(prop_name, 0)
+#         })
+#
+#     context = {
+#         'project': project,
+#         'input_data_total': input_data_total,
+#         'total_zelenl': total_zelenl,
+#         'result_list': destroyed_properties,
+#         'calcilate_zelen_summ': zelen_summ,
+#         'properties_with_counts': properties_with_counts,  # Используем подготовленный список
+#     }
+#     return render(request, 'results_gazon.html', context)
+
+@login_required
+def results_gazon_view(request, project_id):
+    """Ведомость газонов"""
+    # Добавляем проверку, что проект принадлежит пользователю
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # -------------------Суммируем по Группам -----------------
+    input_data_total = (InputData.objects
+                        .filter(project_id=project)
+                        .values('element_id__name_element', 'property_id__property_name', 'event')
+                        .annotate(
+        total_square=Sum('square'),
+        total_length=Sum('length')
+    ).order_by('element_id__name_element', 'property_id__property_name'))
+    input_data_total = calculate_totals(input_data_total)
+
+    # ------------Озеленения -----------------
+    total_zelenl = (InputData.objects.filter(project_id=project, element_id__name_element='Озеленение (обводнение)')
+                    .values('property_id__property_name', 'event')
+                    .annotate(total_square=Sum('square'))
+                    .order_by('property_id__property_name'))
+
+    destroyed_properties = []
+    for item in total_zelenl:
+        destroyed_properties.append(item['property_id__property_name'])
+
+    for item in total_zelenl:
+        property_name = item['property_id__property_name']
+        if property_name in destroyed_properties:
+            item['mark_of_destroy'] = -1
+        else:
+            item['mark_of_destroy'] = 0
+
+    # Вычисляем суммы для озеленения
+    zelen_summ_dict = calcilate_zelen_summ(total_zelenl)  # Сохраняем результат функции в переменную
+
+    # Дополнительно вычисляем количество валидных строк для каждого свойства
+    property_valid_counts = {}
+    for item in total_zelenl:
+        prop_name = item['property_id__property_name']
+        if prop_name not in property_valid_counts:
+            property_valid_counts[prop_name] = 0
+
+        # Считаем только устройство, сохранение, восстановление
+        if item['event'] in ['устройство', 'сохранение', 'восстановление']:
+            property_valid_counts[prop_name] += 1
+
+    # Создаем список свойств с дополнительной информацией
+    properties_with_counts = []
+
+    # Получаем уникальные названия свойств
+    unique_properties = total_zelenl.values('property_id__property_name').distinct()
+
+    for property_group in unique_properties:
+        prop_name = property_group['property_id__property_name']
+
+        # Фильтруем элементы для текущего свойства
+        property_items = [item for item in total_zelenl if item['property_id__property_name'] == prop_name]
+
+        properties_with_counts.append({
+            'name': prop_name,
+            'items': property_items,
+            'valid_count': property_valid_counts.get(prop_name, 0),
+            'sum_value': zelen_summ_dict.get(prop_name, 0)  # Используем словарь, а не функцию
+        })
+
+    context = {
+        'project': project,
+        'input_data_total': input_data_total,
+        'total_zelenl': total_zelenl,
+        'result_list': destroyed_properties,
+        'calcilate_zelen_summ': zelen_summ_dict,  # Передаем словарь, а не функцию
+        'properties_with_counts': properties_with_counts,
+    }
+    return render(request, 'results_gazon.html', context)
+
 
 @login_required
 def v_edit_all_input_data(request, project_id):

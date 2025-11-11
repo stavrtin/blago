@@ -1,0 +1,48 @@
+<!-- templates/balance_table.html -->
+<div class="balance-section">
+    <h4 class="text-primary mb-4">Сравнительные балансовые показатели</h4>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Общая площадь проекта</h6>
+                    <p class="h4 text-primary">{{ input_square.total_square|default:0 }} м²</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>Объект</th>
+                    <th>Существующая площадь (м²)</th>
+                    <th>Проектная площадь (м²)</th>
+                    <th>Изменение (м²)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for name_obj, values in json_data_now_and_proj.items %}
+                <tr>
+                    <td><strong>{{ name_obj }}</strong></td>
+                    <td>{{ values.0|default:"-"|floatformat:2 }}</td>
+                    <td>{{ values.1|default:"-"|floatformat:2 }}</td>
+                    <td class="{% if values.1 and values.0 %}{% if values.1 > values.0 %}text-success{% else %}text-danger{% endif %}{% endif %}">
+                        {% if values.1 and values.0 %}
+                            {{ values.1|floatformat:2|add:values.0|floatformat:2 }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Нет данных для отображения</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

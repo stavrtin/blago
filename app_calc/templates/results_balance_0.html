@@ -362,7 +362,7 @@
     </style>
 </head>
 <body>
-results_1.html
+results_balance.html
     <div class="container">
         <!-- Header -->
         <header class="header">
@@ -374,162 +374,159 @@ results_1.html
             <nav class="nav-menu">
                 <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
                 <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Ввод данных</a>
-                <a href="{% url 'app_calc:results_view'  project.id %}" class="nav-item">Итоги(общ)</a>
-                <a href="{% url 'app_calc:results_balance_view'  project.id %}" class="nav-item">Итоги(штучно)</a>
+                <a href="{% url 'app_calc:results_balance_view'  project.id %}" class="nav-item">Итоги</a>
             </nav>
         </header>
 
         <!-- Блок 2: Ведомости -->
         <div class="tables-section">
-            <h2>Ведомости</h2>
+<!--            <h2>Ведомости</h2>-->
 
-            <div class="tables-container">
-                <!-- Ведомость демонтажа -->
-                <div class="table-wrapper">
-                    <h3 style="text-align: center">Ведомость демонтажа</h3>
-
-
-                            <table  class="data-table">
-            <thead>
-                <tr>
-                    <th class="number-column">№</th>
-                    <th class="name-column">Наименование</th>
-                    <th class="area-column">Площадь, м²</th>
-                    <th class="note-column">Примечание</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for category in categories %}
-                <!-- Категория -->
-                <tr class="category-row">
-                    <td colspan="4">{{ category.name }}</td>
-                </tr>
-
-                <!-- Элементы категории -->
-                {% for item in category.items %}
-                <tr>
-                    <td class="number-column">{{ item.number }}</td>
-                    <td class="name-column">{{ item.name }}</td>
-                    <td class="area-column">{{ item.area }}</td>
-                    <td class="note-column">{{ item.note }}</td>
-                </tr>
-                {% endfor %}
-                {% endfor %}
-            </tbody>
-        </table>
-
-                </div>
-
-                <!-- Ведомость тротуаров -->
-                <div class="table-wrapper">
-                    <h3>Ведомость тротуаров, дорожек и площадок</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>№</th>
-                                <th>Условное обозн.</th>
-                                <th>Наименование</th>
-<!--                                <th>Тип покрытия</th>-->
-                                <th>Площадь, кв.м</th>
-                                <th>Примечание</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in trotuar_dorojki_total %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td></td>
-                                <td> <b> {{item.element_id__name_element }}</b> - {{item.property_id__property_name }}</td>
-                                <td>{{ item.total_square }}</td>
-                                <td>{{ item.event }}</td>
-                            </tr>
-                            {% empty %}
-                            {% for i in "123456" %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Ведомость газонов -->
-                <div class="table-wrapper">
-                    <h3>Ведомость газонов / травяного покрова</h3>
-
-<!------------------------------ таблица ГАЗОНОВ н-------------------------->
-
-<!------------------------------ таблица ГАЗОНОВ 2 н-------------------------->
-
-<table name="gaz" class="data-table" border="1" cellspacing="0" cellpadding="5">
-    <thead>
-        <tr>
-            <th>№</th>
-            <th>Наименование</th>
-            <th>Площадь</th>
-            <th>Сумма (устр+сохр+восст)</th>
-        </tr>
-    </thead>
+<!--            <div class="tables-container">-->
+<!--                &lt;!&ndash; Ведомость демонтажа &ndash;&gt;-->
+<!--                <div class="table-wrapper">-->
+<!--                    <h3 style="text-align: center">Ведомость демонтажа</h3>-->
 
 
-    <tbody>
-        {% regroup total_zelenl by property_id__property_name as properties_list %}
+<!--                            <table  class="data-table">-->
+<!--            <thead>-->
+<!--                <tr>-->
+<!--                    <th class="number-column">№</th>-->
+<!--                    <th class="name-column">Наименование</th>-->
+<!--                    <th class="area-column">Площадь, м²</th>-->
+<!--                    <th class="note-column">Примечание</th>-->
+<!--                </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--                {% for category in categories %}-->
+<!--                &lt;!&ndash; Категория &ndash;&gt;-->
+<!--                <tr class="category-row">-->
+<!--                    <td colspan="4">{{ category.name }}</td>-->
+<!--                </tr>-->
 
-        {% for property in properties_list %}
-        <!-- Основная строка с названием характеристики -->
-        <tr style="background-color: #f0f0f0;">
-            <td><b>{{ forloop.counter }}</b></td>
-            <td><b>{{ property.grouper }}</b></td>
-            <td></td>
-            <td></td>
-        </tr>
+<!--                &lt;!&ndash; Элементы категории &ndash;&gt;-->
+<!--                {% for item in category.items %}-->
+<!--                <tr>-->
+<!--                    <td class="number-column">{{ item.number }}</td>-->
+<!--                    <td class="name-column">{{ item.name }}</td>-->
+<!--                    <td class="area-column">{{ item.area }}</td>-->
+<!--                    <td class="note-column">{{ item.note }}</td>-->
+<!--                </tr>-->
+<!--                {% endfor %}-->
+<!--                {% endfor %}-->
+<!--            </tbody>-->
+<!--        </table>-->
 
-         <!-----------------       строка с УНИЧТОЖЕНИЕМ -н-->
-             {% for item in property.list %}
-                  {% if item.event == 'уничтожение' %}
-                    <tr>
-                        <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
-                        <td style="padding-left: 30px;"> уничтожение         </td>
-                        <td>{{ item.total_square }}</td>
-                      </tr>
-                  {% endif %}
-            {% endfor %}
-        <!-----------------        строка с УНИЧТОЖЕНИЕМ -к-->
+<!--                </div>-->
 
-        <!-- Подстроки с событиями -->
-        {% for item in property.list %}
-       {% if item.event == 'устройство' or  item.event == 'сохранение' or  item.event == 'восстановление'%}<!-- строки -->
-        <tr>
+<!--                &lt;!&ndash; Ведомость тротуаров &ndash;&gt;-->
+<!--                <div class="table-wrapper">-->
+<!--                    <h3>Ведомость тротуаров, дорожек и площадок</h3>-->
+<!--                    <table class="data-table">-->
+<!--                        <thead>-->
+<!--                            <tr>-->
+<!--                                <th>№</th>-->
+<!--                                <th>Условное обозн.</th>-->
+<!--                                <th>Наименование</th>-->
+<!--&lt;!&ndash;                                <th>Тип покрытия</th>&ndash;&gt;-->
+<!--                                <th>Площадь, кв.м</th>-->
+<!--                                <th>Примечание</th>-->
+<!--                            </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                            {% for item in trotuar_dorojki_total %}-->
+<!--                            <tr>-->
+<!--                                <td>{{ forloop.counter }}</td>-->
+<!--                                <td></td>-->
+<!--                                <td> <b> {{item.element_id__name_element }}</b> - {{item.property_id__property_name }}</td>-->
+<!--                                <td>{{ item.total_square }}</td>-->
+<!--                                <td>{{ item.event }}</td>-->
+<!--                            </tr>-->
+<!--                            {% empty %}-->
+<!--                            {% for i in "123456" %}-->
+<!--                            <tr>-->
+<!--                                <td>{{ forloop.counter }}</td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                            </tr>-->
+<!--                            {% endfor %}-->
+<!--                            {% endfor %}-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
 
-            <td style="padding-left: 30px;"> {{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
-            <td style="padding-left: 30px;"> {{item.event}}   </td>
-            <td>{{ item.total_square }}</td>
+<!--                &lt;!&ndash; Ведомость газонов &ndash;&gt;-->
+<!--                <div class="table-wrapper">-->
+<!--                    <h3>Ведомость газонов / травяного покрова</h3>-->
 
-            <!-- Ячейка с суммой - отображаем только для первой строки -->
-            {% if forloop.first %}
+<!--&lt;!&ndash;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; таблица ГАЗОНОВ н&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
 
-             {% if item.mark_of_destroy == 0 %}
-                <td rowspan="{{ property.list|length|add:'0' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
-             {% endif %}
-             {% if item.mark_of_destroy == -1 %}
-                <td rowspan="{{ property.list|length|add:'-1' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
-             {% endif %}
+<!--&lt;!&ndash;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; таблица ГАЗОНОВ 2 н&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
 
-                   <!-- вычисление (вставка суммы из представления) нач-->
-
-                    {% for key, value in calcilate_zelen_summ.items %}
-                      {% if property.grouper == key %} <b>{{value}}</b>
-                      {% endif %}
-                   {% endfor %}
-                    <!-- вычисление (вставка суммы из представления) конец-->
-                </td>
+<!--<table name="gaz" class="data-table" border="1" cellspacing="0" cellpadding="5">-->
+<!--    <thead>-->
+<!--        <tr>-->
+<!--            <th>№</th>-->
+<!--            <th>Наименование</th>-->
+<!--            <th>Площадь</th>-->
+<!--            <th>Сумма (устр+сохр+восст)</th>-->
+<!--        </tr>-->
+<!--    </thead>-->
 
 
+<!--    <tbody>-->
+<!--        {% regroup total_zelenl by property_id__property_name as properties_list %}-->
+
+<!--        {% for property in properties_list %}-->
+<!--        &lt;!&ndash; Основная строка с названием характеристики &ndash;&gt;-->
+<!--        <tr style="background-color: #f0f0f0;">-->
+<!--            <td><b>{{ forloop.counter }}</b></td>-->
+<!--            <td><b>{{ property.grouper }}</b></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--        </tr>-->
+
+<!--         &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;       строка с УНИЧТОЖЕНИЕМ -н&ndash;&gt;-->
+<!--             {% for item in property.list %}-->
+<!--                  {% if item.event == 'уничтожение' %}-->
+<!--                    <tr>-->
+<!--                        <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>-->
+<!--                        <td style="padding-left: 30px;"> уничтожение         </td>-->
+<!--                        <td>{{ item.total_square }}</td>-->
+<!--                      </tr>-->
+<!--                  {% endif %}-->
+<!--            {% endfor %}-->
+<!--        &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;        строка с УНИЧТОЖЕНИЕМ -к&ndash;&gt;-->
+
+<!--        &lt;!&ndash; Подстроки с событиями &ndash;&gt;-->
+<!--        {% for item in property.list %}-->
+<!--       {% if item.event == 'устройство' or  item.event == 'сохранение' or  item.event == 'восстановление'%}&lt;!&ndash; строки &ndash;&gt;-->
+<!--        <tr>-->
+
+<!--            <td style="padding-left: 30px;"> {{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>-->
+<!--            <td style="padding-left: 30px;"> {{item.event}}   </td>-->
+<!--            <td>{{ item.total_square }}</td>-->
+
+<!--            &lt;!&ndash; Ячейка с суммой - отображаем только для первой строки &ndash;&gt;-->
+<!--            {% if forloop.first %}-->
+
+<!--             {% if item.mark_of_destroy == 0 %}-->
+<!--                <td rowspan="{{ property.list|length|add:'0' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">-->
+<!--             {% endif %}-->
+<!--             {% if item.mark_of_destroy == -1 %}-->
+<!--                <td rowspan="{{ property.list|length|add:'-1' }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">-->
+<!--             {% endif %}-->
+
+<!--                   &lt;!&ndash; вычисление (вставка суммы из представления) нач&ndash;&gt;-->
+
+<!--                    {% for key, value in calcilate_zelen_summ.items %}-->
+<!--                      {% if property.grouper == key %} <b>{{value}}</b>-->
+<!--                      {% endif %}-->
+<!--                   {% endfor %}-->
+<!--                    &lt;!&ndash; вычисление (вставка суммы из представления) конец&ndash;&gt;-->
+<!--                </td>-->
 
 
 
@@ -537,18 +534,20 @@ results_1.html
 
 
 
-            {% endif %}
-        </tr>
-        {% endif %}  <!-- строки -->
-        {% endfor %}
 
-        {% empty %}
-        <tr>
-            <td colspan="4" style="text-align: center;">Нет данных по озеленению</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<!--            {% endif %}-->
+<!--        </tr>-->
+<!--        {% endif %}  &lt;!&ndash; строки &ndash;&gt;-->
+<!--        {% endfor %}-->
+
+<!--        {% empty %}-->
+<!--        <tr>-->
+<!--            <td colspan="4" style="text-align: center;">Нет данных по озеленению</td>-->
+<!--        </tr>-->
+<!--        {% endfor %}-->
+<!--    </tbody>-->
+<!--</table>-->
 <!------------------------------ таблица ГАЗОНОВ к-------------------------->
                 </div>
             </div>
@@ -685,6 +684,7 @@ results_1.html
             {% endfor %}
         </tbody>
     </table>
+</div>
 </div>
 
 </body>

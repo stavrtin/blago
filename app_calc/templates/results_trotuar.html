@@ -1,0 +1,50 @@
+{% extends 'results_balance.html' %}
+{% block project_name %} Ведомость тротуаров, дорожек и площадок <br>
+                  по проекту          "{{ project }}"  {% endblock %}
+
+
+{% block content %}
+results_trotuar.html
+<div class="table-section">
+    <h2>Ведомость тротуаров, дорожек и площадок</h2>
+    
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Поз.</th>
+
+                <th>Наименование</th>
+                <th>Тип</th>
+                <th>Площадь покрытия,<br> кв.м</th>
+                <th>Примечание</th>
+            </tr>
+        </thead>
+        <tbody>
+       {% for category in categories %}
+            <!-- Категория -->
+            <tr class="category-row">
+                <td colspan="4"><strong>{{ category.name }}</strong></td>
+            </tr>
+
+            {% for item in category.items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+
+                <td><b>{{ item.name }}</b> </td>
+                          <td></td>
+                <td>{{ item.area }}</td>
+                <td>{{ item.note }}</td>
+            </tr>
+            {% endfor %}
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Нет данных по тротуарам и дорожкам</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    {{categories}}<br>
+    {{trotuar_dorojki_total}}
+</div>
+{% endblock %}

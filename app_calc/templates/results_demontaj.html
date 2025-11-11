@@ -1,0 +1,43 @@
+{% extends 'results_balance.html' %}
+{% block project_name %} Ведомость демонтажа <br>
+                  по проекту          "{{ project }}"  {% endblock %}
+
+{% block content %}
+results_demontaj.html
+<div class="table-section">
+    <h2>Ведомость демонтажа</h2>
+    
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th class="number-column">№</th>
+                <th class="name-column">Наименование</th>
+                <th class="area-column">Площадь, м²</th>
+                <th class="note-column">Примечание</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <!-- Категория -->
+            <tr class="category-row">
+                <td colspan="4"><strong>{{ category.name }}</strong></td>
+            </tr>
+
+            <!-- Элементы категории -->
+            {% for item in category.items %}
+            <tr>
+                <td class="number-column">{{ item.number }}</td>
+                <td class="name-column">{{ item.name }}</td>
+                <td class="area-column">{{ item.area }}</td>
+                <td class="note-column">{{ item.note }}</td>
+            </tr>
+            {% endfor %}
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Нет данных по демонтажу</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
