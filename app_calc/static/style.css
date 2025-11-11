@@ -346,3 +346,254 @@ h3 {
 .balance-nav .nav-item:hover {
     background: #2980b9;
 }
+
+/* Добавляем эти стили в конец существующего style.css */
+
+/* Стили для таблиц в стиле results_balance */
+.balance-style-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
+    line-height: 1.2;
+    table-layout: fixed;
+}
+
+.balance-style-table th,
+.balance-style-table td {
+    padding: 6px 4px;
+    text-align: left;
+    border: 1px solid #333;
+    font-family: 'Times New Roman', Times, serif;
+    vertical-align: middle;
+}
+
+.balance-style-table th {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    padding: 7px 4px;
+}
+
+.balance-style-table .subheader {
+    background: #34495e;
+    font-weight: normal;
+    font-size: 18px;
+    padding: 6px 3px;
+}
+
+/* Фиксируем ширину колонок для балансовой таблицы */
+.balance-style-table th:nth-child(1),
+.balance-style-table td:nth-child(1) {
+    width: 35px;
+    text-align: center;
+}
+
+.balance-style-table th:nth-child(2),
+.balance-style-table td:nth-child(2) {
+    width: 220px;
+    text-align: left;
+}
+
+.balance-style-table th:nth-child(3),
+.balance-style-table td:nth-child(3),
+.balance-style-table th:nth-child(4),
+.balance-style-table td:nth-child(4),
+.balance-style-table th:nth-child(5),
+.balance-style-table td:nth-child(5),
+.balance-style-table th:nth-child(6),
+.balance-style-table td:nth-child(6) {
+    width: 75px;
+    text-align: center;
+}
+
+/* Стили для категорий */
+.balance-style-table .category-header {
+    background: #bfd5f3 !important;
+    font-weight: bold;
+}
+
+.balance-style-table .category-header td {
+    font-weight: bold;
+    background: #bfd5f3;
+    font-size: 20px;
+}
+
+.balance-style-table .subcategory td {
+    padding-left: 20px;
+    font-style: italic;
+    font-size: 16px;
+}
+
+.balance-style-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.balance-style-table .percentage {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.balance-style-table tr:first-child td {
+    font-weight: bold;
+    background: #e8f4f8;
+    font-size: 20px;
+}
+
+/* Стили для таблиц ведомостей (демонтаж, газоны, тротуары) */
+.statement-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
+    line-height: 1.2;
+    table-layout: fixed;
+}
+
+.statement-table th,
+.statement-table td {
+    padding: 8px 6px;
+    text-align: left;
+    border: 1px solid #333;
+    font-family: 'Times New Roman', Times, serif;
+    vertical-align: middle;
+}
+
+.statement-table th {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 6px;
+}
+
+.statement-table .number-column {
+    width: 50px;
+    text-align: center;
+}
+
+.statement-table .name-column {
+    width: 300px;
+    text-align: left;
+}
+
+.statement-table .area-column {
+    width: 100px;
+    text-align: center;
+}
+
+.statement-table .note-column {
+    width: 150px;
+    text-align: left;
+}
+
+/* Стили для строк категорий в ведомостях */
+.statement-table .category-row {
+    background: #bfd5f3 !important;
+    font-weight: bold;
+}
+
+.statement-table .category-row td {
+    font-weight: bold;
+    background: #bfd5f3;
+    font-size: 18px;
+    padding: 10px 6px;
+}
+
+/* Стили для газонов */
+.gazon-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
+    line-height: 1.2;
+    table-layout: fixed;
+}
+
+.gazon-table th,
+.gazon-table td {
+    padding: 8px 6px;
+    text-align: left;
+    border: 1px solid #333;
+    font-family: 'Times New Roman', Times, serif;
+    vertical-align: middle;
+}
+
+.gazon-table th {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 6px;
+}
+
+.gazon-table .category-header {
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+.gazon-table .category-header td {
+    font-weight: bold;
+    background: #f0f0f0;
+    font-size: 16px;
+    padding: 8px 6px;
+}
+
+.gazon-table .sum-cell {
+    background-color: #e8f5e8;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+/* Навигация в балансе */
+.balance-nav {
+    text-align: right;
+    margin-bottom: 8px;
+}
+
+.balance-nav .nav-item {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Times New Roman', Times, serif;
+    transition: background 0.3s ease;
+}
+
+.balance-nav .nav-item:hover {
+    background: #2980b9;
+}
+
+/* Responsive для новых таблиц */
+@media (max-width: 768px) {
+    .balance-style-table,
+    .statement-table,
+    .gazon-table {
+        font-size: 12px;
+    }
+
+    .balance-style-table th,
+    .balance-style-table td,
+    .statement-table th,
+    .statement-table td,
+    .gazon-table th,
+    .gazon-table td {
+        padding: 4px 3px;
+    }
+
+    .statement-table .name-column {
+        width: 200px;
+    }
+}

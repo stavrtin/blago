@@ -3,8 +3,9 @@
 {% block content %}
 <div class="table-section">
     <h2>Ведомость газонов / травяного покрова</h2>
-    
-    <table class="data-table" border="1" cellspacing="0" cellpadding="5">
+
+     <div style="max-width: 900px; margin: 0 auto;">
+    <table class="gazon-table">
         <thead>
             <tr>
                 <th>№</th>
@@ -16,7 +17,7 @@
         <tbody>
             {% for property in properties_with_counts %}
             <!-- Основная строка с названием характеристики -->
-            <tr style="background-color: #f0f0f0;">
+            <tr class="category-header">
                 <td><b>{{ forloop.counter }}</b></td>
                 <td><b>{{ property.name }}</b></td>
                 <td></td>
@@ -45,7 +46,7 @@
 
                     <!-- Ячейка с суммой - отображаем только для первой строки -->
                     {% if forloop.first and property.valid_count > 0 %}
-                    <td rowspan="{{ property.valid_count }}" style="background-color: #e8f5e8; text-align: center; vertical-align: middle;">
+                    <td rowspan="{{ property.valid_count }}" class="sum-cell">
                         <b>{{ property.sum_value|floatformat:2 }}</b>
                     </td>
                     {% endif %}

@@ -2,38 +2,35 @@
 {% block project_name %} Ведомость тротуаров, дорожек и площадок <br>
                   по проекту          "{{ project }}"  {% endblock %}
 
-
 {% block content %}
 results_trotuar.html
 <div class="table-section">
     <h2>Ведомость тротуаров, дорожек и площадок</h2>
-    
-    <table class="data-table">
+ <div style="max-width: 900px; margin: 0 auto;">
+    <table class="statement-table">
         <thead>
             <tr>
-                <th>Поз.</th>
-
-                <th>Наименование</th>
-                <th>Тип</th>
-                <th>Площадь покрытия,<br> кв.м</th>
-                <th>Примечание</th>
+                <th class="number-column">Поз.</th>
+                <th class="name-column">Наименование</th>
+                <th class="note-column">Тип</th>
+                <th class="area-column">Площадь покрытия,<br> кв.м</th>
+                <th class="note-column">Примечание</th>
             </tr>
         </thead>
         <tbody>
        {% for category in categories %}
             <!-- Категория -->
             <tr class="category-row">
-                <td colspan="4"><strong>{{ category.name }}</strong></td>
+                <td colspan="5"><strong>{{ category.name }}</strong></td>
             </tr>
 
             {% for item in category.items %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-
-                <td><b>{{ item.name }}</b> </td>
-                          <td></td>
-                <td>{{ item.area }}</td>
-                <td>{{ item.note }}</td>
+                <td class="number-column">{{ forloop.counter }}</td>
+                <td class="name-column"><b>{{ item.name }}</b></td>
+                <td class="note-column"></td>
+                <td class="area-column">{{ item.area }}</td>
+                <td class="note-column">{{ item.note }}</td>
             </tr>
             {% endfor %}
             {% empty %}
@@ -42,9 +39,6 @@ results_trotuar.html
             </tr>
             {% endfor %}
         </tbody>
-
     </table>
-    {{categories}}<br>
-    {{trotuar_dorojki_total}}
 </div>
 {% endblock %}

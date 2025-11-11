@@ -272,16 +272,27 @@ def calculate_totals(queryset):
 def calcilate_zelen_summ(data_from_ozelenen):
     # --------------ВЫЧИСЛЕНИЕ озеленения (без уничтожения)
     # ---------------на выходе словарь--- {'Газон/травяной покров': 45.0, 'Цветники': 50.0}
+    if not data_from_ozelenen:
+        return {}
 
-    df = pd.DataFrame(data_from_ozelenen)
-    df_res = (df.loc[df['event']
-                            .isin(['сохранение', 'устройство', 'восстановление'])]
-                            .groupby('property_id__property_name')
-                            .agg({'total_square': 'sum'}))
+    try:
+        df = pd.DataFrame(data_from_ozelenen)
 
-    dict_exit = df_res.to_dict().get('total_square')
-    print(f'{dict_exit=}')
-    return dict_exit
+        # Проверяем наличие необходимых колонок
+        if 'event' not in df.columns or 'property_id__property_name' not in df.columns or 'total_square' not in df.columns:
+            return {}
+
+        df_res = (df.loc[df['event']
+                  .isin(['сохранение', 'устройство', 'восстановление'])]
+                  .groupby('property_id__property_name')
+                  .agg({'total_square': 'sum'}))
+
+        dict_exit = df_res.to_dict().get('total_square', {})
+        print(f'{dict_exit=}')
+        return dict_exit
+    except Exception as e:
+        print(f"Ошибка в calcilate_zelen_summ: {e}")
+        return {}
 
 def marker_destroy(data_from_ozelenen):
     # --------------ВЫЧИСЛЕНИЕ признака наличия строки "уничтожение"
@@ -302,32 +313,48 @@ def marker_destroy(data_from_ozelenen):
     return dict_exit
 
 def calculate_totals_balance(json_data):
-    df_start = pd.DataFrame(json_data)
-    df_bez_zelet_now = df_start.loc[df_start.event.isin(['сохранение', 'демонтаж', 'ремонт', 'установка'])
-                                    & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
+    if not json_data:
+        return [{}, {}]
 
-    df_zelen_now = df_start.loc[df_start.event.isin(['сохранение','уничтожение','восстановление'])
-                            & df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
+    try:
+        df_start = pd.DataFrame(json_data)
 
-    df_now = pd.concat([df_bez_zelet_now, df_zelen_now])
+        # Проверяем наличие необходимых колонок
+        required_columns = ['event', 'element_id__name_element', 'property_id__property_name', 'total_square']
+        for col in required_columns:
+            if col not in df_start.columns:
+                return [{}, {}]
 
-    df_bez_zelet_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','ремонт', 'установка'])
-                             & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
+        df_bez_zelet_now = df_start.loc[df_start.event.isin(['сохранение', 'демонтаж', 'ремонт', 'установка'])
+                                        & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
-    df_zelen_proj = df_start.loc[df_start.event.isin(['сохранение','устройство','восстановление', 'установка'])
-                             & df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
+        df_zelen_now = df_start.loc[df_start.event.isin(['сохранение', 'уничтожение', 'восстановление'])
+                                    & df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
-    df_proj = pd.concat([df_bez_zelet_proj, df_zelen_proj])
+        df_now = pd.concat([df_bez_zelet_now, df_zelen_now])
 
-    dict_now = df_now.groupby(['element_id__name_element','property_id__property_name']).agg({'total_square':'sum'}).to_dict()
-    result_dict_now = { f"{element}.{property_name}": value  for (element, property_name), value in dict_now['total_square'].items()}
+        df_bez_zelet_proj = df_start.loc[df_start.event.isin(['сохранение', 'устройство', 'ремонт', 'установка'])
+                                         & ~df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
-    dict_proj = df_proj.groupby(['element_id__name_element', 'property_id__property_name']).agg(
-        {'total_square': 'sum'}).to_dict()
-    result_dict_proj = {f"{element}.{property_name}": value for (element, property_name), value in
-                        dict_proj['total_square'].items()}
+        df_zelen_proj = df_start.loc[df_start.event.isin(['сохранение', 'устройство', 'восстановление', 'установка'])
+                                     & df_start.element_id__name_element.isin(['Озеленение (обводнение)'])]
 
-    return [result_dict_now, result_dict_proj]
+        df_proj = pd.concat([df_bez_zelet_proj, df_zelen_proj])
+
+        dict_now = df_now.groupby(['element_id__name_element', 'property_id__property_name']).agg(
+            {'total_square': 'sum'}).to_dict()
+        result_dict_now = {f"{element}.{property_name}": value for (element, property_name), value in
+                           dict_now['total_square'].items()}
+
+        dict_proj = df_proj.groupby(['element_id__name_element', 'property_id__property_name']).agg(
+            {'total_square': 'sum'}).to_dict()
+        result_dict_proj = {f"{element}.{property_name}": value for (element, property_name), value in
+                            dict_proj['total_square'].items()}
+
+        return [result_dict_now, result_dict_proj]
+    except Exception as e:
+        print(f"Ошибка в calculate_totals_balance: {e}")
+        return [{}, {}]
 
 @login_required
 def results_view(request, project_id):
@@ -407,27 +434,25 @@ def results_view(request, project_id):
     # ------------------ Создание признака УНИЧТОЖЕНИЕ- для формирования
     # ------------ переменной, участвующей в шаблоне для объединения
     # ---------------------ячеек  <td rowspan="{{ property.list|length|add:'-1' }}" style="background-color:....">
-    # Сначала найдем все property_name, где есть событие 'уничтожение'
-    # destroyed_properties = set()
-    destroyed_properties = []
-    for item in total_zelenl:
-            # destroyed_properties.add(item['property_id__property_name'])
-            destroyed_properties.append(item['property_id__property_name'])
+    if total_zelenl:
+        destroyed_properties = []
+        for item in total_zelenl:
+                # destroyed_properties.add(item['property_id__property_name'])
+                destroyed_properties.append(item['property_id__property_name'])
 
 
-    for item in total_zelenl:
-        property_name = item['property_id__property_name']
-        if property_name in destroyed_properties:
-            # Если свойство есть в множестве уничтоженных, ставим -1, иначе 0
-            # dict_new[property_name] = -1 if property_name in destroyed_properties else 0
-            item['mark_of_destroy'] = -1 # если есть "уничтожение"
-        else: item['mark_of_destroy'] = 0 # если есть "уничтожение"
+        for item in total_zelenl:
+            property_name = item['property_id__property_name']
+            if property_name in destroyed_properties:
+                # Если свойство есть в множестве уничтоженных, ставим -1, иначе 0
+                # dict_new[property_name] = -1 if property_name in destroyed_properties else 0
+                item['mark_of_destroy'] = -1 # если есть "уничтожение"
+            else: item['mark_of_destroy'] = 0 # если есть "уничтожение"
 
-    # ---------------------------------------------------------------таблица ГАЗОНОВ н-
-
-
-    zelen_summ = calcilate_zelen_summ(total_zelenl) #-----вычислим суммы для озеленения
-
+        # ---------------------------------------------------------------таблица ГАЗОНОВ н-
+        zelen_summ = calcilate_zelen_summ(total_zelenl) #-----вычислим суммы для озеленения
+    else:
+        zelen_summ = {}
 
 
     # ------------------------------сбор БАЛАНСОВ всего, что есть , с группировкой для упрщен --1нач
@@ -822,78 +847,6 @@ def results_trotuar_view(request, project_id):
     }
     return render(request, 'results_trotuar.html', context)
 
-
-# @login_required
-# def results_gazon_view(request, project_id):
-#     """Ведомость газонов"""
-#     # Добавляем проверку, что проект принадлежит пользователю
-#     project = get_object_or_404(Project, pk=project_id, user=request.user)
-#
-#     # -------------------Суммируем по Группам -----------------
-#     input_data_total = (InputData.objects
-#                         .filter(project_id=project)
-#                         .values('element_id__name_element', 'property_id__property_name', 'event')
-#                         .annotate(
-#         total_square=Sum('square'),
-#         total_length=Sum('length')
-#     ).order_by('element_id__name_element', 'property_id__property_name'))
-#     input_data_total = calculate_totals(input_data_total)
-#
-#     # ------------Озеленения -----------------
-#     total_zelenl = (InputData.objects.filter(project_id=project, element_id__name_element='Озеленение (обводнение)')
-#                     .values('property_id__property_name', 'event')
-#                     .annotate(total_square=Sum('square'))
-#                     .order_by('property_id__property_name'))
-#
-#     destroyed_properties = []
-#     for item in total_zelenl:
-#         # destroyed_properties.add(item['property_id__property_name'])
-#         destroyed_properties.append(item['property_id__property_name'])
-#
-#     for item in total_zelenl:
-#         property_name = item['property_id__property_name']
-#         if property_name in destroyed_properties:
-#             # Если свойство есть в множестве уничтоженных, ставим -1, иначе 0
-#             # dict_new[property_name] = -1 if property_name in destroyed_properties else 0
-#             item['mark_of_destroy'] = -1  # если есть "уничтожение"
-#         else:
-#             item['mark_of_destroy'] = 0  # если есть "уничтожение"
-#
-#     # ---------------------------------------------------------------таблица ГАЗОНОВ н-
-#
-#     zelen_summ = calcilate_zelen_summ(total_zelenl)  # -----вычислим суммы для озеленения
-#
-#     # Дополнительно вычисляем количество валидных строк для каждого свойства
-#     property_valid_counts = {}
-#     for item in total_zelenl:
-#         prop_name = item['property_id__property_name']
-#         if prop_name not in property_valid_counts:
-#             property_valid_counts[prop_name] = 0
-#
-#         # Считаем только устройство, сохранение, восстановление
-#         if item['event'] in ['устройство', 'сохранение', 'восстановление']:
-#             property_valid_counts[prop_name] += 1
-#
-#     # Создаем список свойств с дополнительной информацией
-#     properties_with_counts = []
-#     for property_group in total_zelenl.values('property_id__property_name').distinct():
-#         prop_name = property_group['property_id__property_name']
-#         properties_with_counts.append({
-#             'name': prop_name,
-#             'items': [item for item in total_zelenl if item['property_id__property_name'] == prop_name],
-#             'valid_count': property_valid_counts.get(prop_name, 0),
-#             'sum_value': calcilate_zelen_summ.get(prop_name, 0)
-#         })
-#
-#     context = {
-#         'project': project,
-#         'input_data_total': input_data_total,
-#         'total_zelenl': total_zelenl,
-#         'result_list': destroyed_properties,
-#         'calcilate_zelen_summ': zelen_summ,
-#         'properties_with_counts': properties_with_counts,  # Используем подготовленный список
-#     }
-#     return render(request, 'results_gazon.html', context)
 
 @login_required
 def results_gazon_view(request, project_id):

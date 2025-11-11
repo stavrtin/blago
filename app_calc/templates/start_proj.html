@@ -181,8 +181,7 @@ start_proj.html
                         <td>{{ project.author }}</td>
                         <td>{{ project.created_at|date:"d.m.Y H:i" }}</td>
                         <td style="text-align: center;">
-<!--                            <a href="{% url 'app_calc:tab_start_view' project.id %}" class="action-btn">-->
-                            <a href="{% url 'app_calc:results_view'  project.id %}" class="action-btn">
+                            <a href="{% url 'app_calc:results_balance_view'  project.id %}" class="action-btn">
                                 Открыть проект
                             </a>
                         </td>
