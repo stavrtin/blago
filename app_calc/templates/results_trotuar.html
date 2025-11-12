@@ -1,44 +1,80 @@
 {% extends 'results_balance.html' %}
-{% block project_name %} Ведомость тротуаров, дорожек и площадок <br>
+{% block project_name %} Ведомость тротуаров и дорожек <br>
                   по проекту          "{{ project }}"  {% endblock %}
 
 {% block content %}
 results_trotuar.html
 <div class="table-section">
-    <h2>Ведомость тротуаров, дорожек и площадок</h2>
+    <h2>Ведомость тротуаров и дорожек</h2>
+
  <div style="max-width: 900px; margin: 0 auto;">
     <table class="statement-table">
         <thead>
             <tr>
-                <th class="number-column">Поз.</th>
+                <th class="number-column">№</th>
                 <th class="name-column">Наименование</th>
-                <th class="note-column">Тип</th>
-                <th class="area-column">Площадь покрытия,<br> кв.м</th>
+                <th class="area-column">Площадь, м²</th>
                 <th class="note-column">Примечание</th>
             </tr>
         </thead>
         <tbody>
-       {% for category in categories %}
+            {% for category in categories %}
             <!-- Категория -->
             <tr class="category-row">
-                <td colspan="5"><strong>{{ category.name }}</strong></td>
+                <td colspan="4"><strong>{{ category.name }}</strong></td>
             </tr>
 
+            <!-- Элементы категории -->
             {% for item in category.items %}
-            <tr>
-                <td class="number-column">{{ forloop.counter }}</td>
-                <td class="name-column"><b>{{ item.name }}</b></td>
-                <td class="note-column"></td>
-                <td class="area-column">{{ item.area }}</td>
-                <td class="note-column">{{ item.note }}</td>
+            <tr class="trotuar-item" style="cursor: pointer;">
+                <td class="number-column">
+                    <a href="{% url 'app_calc:v_edit_trotuar_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.number }}
+                    </a>
+                </td>
+                <td class="name-column">
+                    <a href="{% url 'app_calc:v_edit_trotuar_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.name }}
+                    </a>
+                </td>
+                <td class="area-column">
+                    <a href="{% url 'app_calc:v_edit_trotuar_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                        {{ item.area }}
+                    </a>
+                </td>
+                <td class="note-column">
+                    <a href="{% url 'app_calc:v_edit_trotuar_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.note }}
+                    </a>
+                </td>
             </tr>
             {% endfor %}
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center;">Нет данных по тротуарам и дорожкам</td>
+                <td colspan="4" style="text-align: center;">Нет данных по тротуарам и дорожкам</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<style>
+    /* Стили для кликабельных строк тротуаров */
+    .statement-table tbody tr.trotuar-item:hover {
+        background-color: #f0fff0 !important;
+    }
+
+    .statement-table tbody tr.trotuar-item a:hover {
+        background-color: #e8f5e8;
+        border-radius: 3px;
+    }
+
+    .statement-table tbody tr.trotuar-item a {
+        transition: background-color 0.3s ease;
+    }
+</style>
 {% endblock %}

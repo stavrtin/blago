@@ -19,7 +19,12 @@
             <!-- Основная строка с названием характеристики -->
             <tr class="category-header">
                 <td><b>{{ forloop.counter }}</b></td>
-                <td><b>{{ property.name }}</b></td>
+                <td>
+                    <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        <b>{{ property.name }}</b>
+                    </a>
+                </td>
                 <td></td>
                 <td></td>
             </tr>
@@ -27,10 +32,25 @@
             <!-- Сначала выводим уничтожение -->
             {% for item in property.items %}
                 {% if item.event == 'уничтожение' %}
-                <tr>
-                    <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
-                    <td style="padding-left: 30px;">уничтожение</td>
-                    <td>{{ item.total_square|floatformat:2 }}</td>
+                <tr class="gazon-item">
+                    <td style="padding-left: 30px;">
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                            {{ forloop.parentloop.counter }}.{{ forloop.counter }}
+                        </a>
+                    </td>
+                    <td style="padding-left: 30px;">
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                            уничтожение
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                            {{ item.total_square|floatformat:2 }}
+                        </a>
+                    </td>
                     <td></td>
                 </tr>
                 {% endif %}
@@ -39,15 +59,33 @@
             <!-- Затем выводим остальные события (устройство, сохранение, восстановление) -->
             {% for item in property.items %}
                 {% if item.event == 'устройство' or item.event == 'сохранение' or item.event == 'восстановление' %}
-                <tr>
-                    <td style="padding-left: 30px;">{{ forloop.parentloop.counter }}.{{ forloop.counter }}</td>
-                    <td style="padding-left: 30px;">{{ item.event }}</td>
-                    <td>{{ item.total_square|floatformat:2 }}</td>
+                <tr class="gazon-item">
+                    <td style="padding-left: 30px;">
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                            {{ forloop.parentloop.counter }}.{{ forloop.counter }}
+                        </a>
+                    </td>
+                    <td style="padding-left: 30px;">
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                            {{ item.event }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                            {{ item.total_square|floatformat:2 }}
+                        </a>
+                    </td>
 
                     <!-- Ячейка с суммой - отображаем только для первой строки -->
                     {% if forloop.first and property.valid_count > 0 %}
                     <td rowspan="{{ property.valid_count }}" class="sum-cell">
-                        <b>{{ property.sum_value|floatformat:2 }}</b>
+                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
+                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                            <b>{{ property.sum_value|floatformat:2 }}</b>
+                        </a>
                     </td>
                     {% endif %}
                 </tr>
@@ -62,4 +100,29 @@
         </tbody>
     </table>
 </div>
+
+<style>
+    /* Стили для кликабельных строк газонов */
+    .gazon-table tbody tr.gazon-item:hover {
+        background-color: #f0fff0 !important;
+    }
+
+    .gazon-table tbody tr.gazon-item a:hover {
+        background-color: #e8f5e8;
+        border-radius: 3px;
+    }
+
+    .gazon-table tbody tr.gazon-item a {
+        transition: background-color 0.3s ease;
+    }
+
+    .gazon-table .category-header:hover {
+        background-color: #d4edda !important;
+    }
+
+    .gazon-table .category-header a:hover {
+        background-color: #c3e6cb;
+        border-radius: 3px;
+    }
+</style>
 {% endblock %}

@@ -237,7 +237,11 @@ def tab_start_view(request, project_id):
 
         return redirect('app_calc:tab_start_view', project_id=project.id)
 
-    input_data = InputData.objects.filter(project_id=project).select_related('element_id', 'property_id').all()
+    input_data = (InputData.objects
+                  .filter(project_id=project)
+                  .select_related('element_id', 'property_id')
+                  .order_by('element_id__name_element', 'property_id__property_name' ))
+
     elements = Element.objects.all()
 
     context = {
@@ -932,7 +936,15 @@ def v_edit_all_input_data(request, project_id):
     # ----------------- представление для перехода таб со ВСЕМИ веденными данными --
     # ----------------- для их дальнейшей корректировки -----------------------------
 
-    input_data = InputData.objects.filter(project_id=project_id).all()
+    # input_data = InputData.objects.filter(project_id=project_id).all()
+
+    input_data = (InputData.objects
+                  .filter(project_id=project)
+                  # .select_related('element_id', 'property_id')
+                  .order_by('element_id__name_element', 'property_id__property_name'))
+
+
+
 
     context = {
                 'project': project,
@@ -943,7 +955,7 @@ def v_edit_all_input_data(request, project_id):
 
 @login_required
 def edit_input_data(request, pk):
-    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
+    input_data = get_object_or_404(InputData, pk=pk)
 
     if request.method == 'POST':
         # Обрабатываем данные формы вручную
@@ -961,7 +973,7 @@ def edit_input_data(request, pk):
         input_data.event = event
 
         input_data.save()
-        return redirect('app_calc:results_view', project_id=input_data.project_id.id)
+        return redirect('app_calc:results_balance_view', project_id=input_data.project_id.id)
 
     # Получаем все возможные choices для события
     # event_choices = InputData.EVENT_CHOICES
@@ -996,7 +1008,7 @@ def edit_input_data(request, pk):
 @login_required
 def confirm_delete_input_data(request, pk):
     """Страница подтверждения удаления"""
-    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
+    input_data = get_object_or_404(InputData, pk=pk)
     return render(request, 'confirm_delete.html', {
         'input_data': input_data
     })
@@ -1004,7 +1016,7 @@ def confirm_delete_input_data(request, pk):
 @login_required
 def delete_input_data(request, pk):
     """Непосредственное удаление"""
-    input_data = get_object_or_404(InputData, pk=pk, user=request.user)
+    input_data = get_object_or_404(InputData, pk=pk)
     project_id = input_data.project_id.id
 
     try:
@@ -1013,4 +1025,379 @@ def delete_input_data(request, pk):
     except Exception as e:
         messages.error(request, f'Ошибка при удалении: {str(e)}')
 
-    return redirect('app_calc:results_view', project_id=project_id)
+    return redirect('app_calc:results_balance_view', project_id=project_id)
+
+@login_required
+def edit_balance_data(request, project_id):
+    """Редактирование всех записей по выбранной характеристике из баланса"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # Получаем параметры из GET запроса
+    element_name = request.GET.get('element')
+    property_name = request.GET.get('property')
+
+    if not all([element_name, property_name]):
+        messages.error(request, 'Не указаны элемент или характеристика для редактирования')
+        return redirect('app_calc:results_balance_view', project_id=project.id)
+
+    try:
+        element = Element.objects.get(name_element=element_name)
+        property_obj = Property.objects.get(
+            element_id=element,
+            property_name=property_name
+        )
+
+        # Получаем ВСЕ записи InputData для этой характеристики
+        input_data_records = InputData.objects.filter(
+            project_id=project,
+            element_id=element,
+            property_id=property_obj
+        ).order_by('event')
+
+        if request.method == 'POST':
+            # Обрабатываем массовое сохранение
+            updated_count = 0
+            for record in input_data_records:
+                square_key = f"square_{record.id}"
+                length_key = f"length_{record.id}"
+                event_key = f"event_{record.id}"
+
+                square_value = request.POST.get(square_key)
+                length_value = request.POST.get(length_key)
+                event_value = request.POST.get(event_key)
+
+                # Обновляем запись если есть изменения
+                if square_value is not None:
+                    record.square = float(square_value) if square_value else None
+                if length_value is not None:
+                    record.length = float(length_value) if length_value else None
+                if event_value:
+                    record.event = event_value
+
+                record.save()
+                updated_count += 1
+
+            messages.success(request, f'Успешно обновлено {updated_count} записей!')
+            return redirect('app_calc:results_balance_view', project_id=project.id)
+
+        # Если записей нет, создаем базовые записи
+        if not input_data_records.exists():
+            # Создаем записи для существующего и проектного положений
+            base_events = ['сохранение', 'устройство']  # можно добавить другие события по умолчанию
+            for event in base_events:
+                InputData.objects.create(
+                    project_id=project,
+                    element_id=element,
+                    property_id=property_obj,
+                    square=0,
+                    length=0,
+                    event=event
+                )
+            input_data_records = InputData.objects.filter(
+                project_id=project,
+                element_id=element,
+                property_id=property_obj
+            ).order_by('event')
+
+        # Получаем все возможные choices для событий
+        event_choices = InputData.EVENT_CHOICES
+
+        context = {
+            'project': project,
+            'element': element,
+            'property': property_obj,
+            'input_data_records': input_data_records,
+            'event_choices': event_choices,
+        }
+
+        return render(request, 'edit_balance_data.html', context)
+
+    except (Element.DoesNotExist, Property.DoesNotExist) as e:
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('app_calc:results_balance_view', project_id=project.id)
+
+
+@login_required
+def v_edit_demon_data(request, project_id):
+    """Редактирование записей демонтажа"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # Получаем параметры из GET запроса
+    element_name = request.GET.get('element')
+    property_name = request.GET.get('property')
+
+    if not all([element_name, property_name]):
+        messages.error(request, 'Не указаны элемент или характеристика для редактирования')
+        return redirect('app_calc:results_demontaj_view', project_id=project.id)
+
+    try:
+        element = Element.objects.get(name_element=element_name)
+        property_obj = Property.objects.get(
+            element_id=element,
+            property_name=property_name
+        )
+
+        # Получаем ВСЕ записи InputData для демонтажа этой характеристики
+        input_data_records = InputData.objects.filter(
+            project_id=project,
+            element_id=element,
+            property_id=property_obj
+        ).filter(event__in=['демонтаж', 'ремонт']).order_by('event')
+
+        if request.method == 'POST':
+            # Обрабатываем массовое сохранение
+            updated_count = 0
+            for record in input_data_records:
+                square_key = f"square_{record.id}"
+                length_key = f"length_{record.id}"
+                event_key = f"event_{record.id}"
+
+                square_value = request.POST.get(square_key)
+                length_value = request.POST.get(length_key)
+                event_value = request.POST.get(event_key)
+
+                # Обновляем запись если есть изменения
+                if square_value is not None:
+                    record.square = float(square_value) if square_value else None
+                if length_value is not None:
+                    record.length = float(length_value) if length_value else None
+                if event_value:
+                    record.event = event_value
+
+                record.save()
+                updated_count += 1
+
+            messages.success(request, f'Успешно обновлено {updated_count} записей демонтажа!')
+            return redirect('app_calc:results_demontaj_view', project_id=project.id)
+
+        # Если записей нет, создаем базовые записи для демонтажа
+        if not input_data_records.exists():
+            # Создаем записи для демонтажа
+            demon_events = ['демонтаж', 'ремонт']
+            for event in demon_events:
+                InputData.objects.create(
+                    project_id=project,
+                    element_id=element,
+                    property_id=property_obj,
+                    square=0,
+                    length=0,
+                    event=event
+                )
+            input_data_records = InputData.objects.filter(
+                project_id=project,
+                element_id=element,
+                property_id=property_obj
+            ).filter(event__in=['демонтаж', 'ремонт']).order_by('event')
+
+        # Получаем choices для демонтажа
+        event_choices_demon = [
+            ('демонтаж', 'Демонтаж'),
+            ('ремонт', 'Ремонт'),
+        ]
+
+        context = {
+            'project': project,
+            'element': element,
+            'property': property_obj,
+            'input_data_records': input_data_records,
+            'event_choices': event_choices_demon,
+        }
+
+        return render(request, 'edit_demon_data.html', context)
+
+    except (Element.DoesNotExist, Property.DoesNotExist) as e:
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('app_calc:results_demontaj_view', project_id=project.id)
+
+
+@login_required
+def v_edit_trotuar_data(request, project_id):
+    """Редактирование записей тротуаров и дорожек"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # Получаем параметры из GET запроса
+    element_name = request.GET.get('element')
+    property_name = request.GET.get('property')
+
+    if not all([element_name, property_name]):
+        messages.error(request, 'Не указаны элемент или характеристика для редактирования')
+        return redirect('app_calc:results_trotuar_view', project_id=project.id)
+
+    try:
+        element = Element.objects.get(name_element=element_name)
+        property_obj = Property.objects.get(
+            element_id=element,
+            property_name=property_name
+        )
+
+        # Получаем ВСЕ записи InputData для тротуаров этой характеристики
+        input_data_records = InputData.objects.filter(
+            project_id=project,
+            element_id=element,
+            property_id=property_obj
+        ).filter(event__in=['устройство', 'ремонт', 'установка', 'сохранение']).order_by('event')
+
+        if request.method == 'POST':
+            # Обрабатываем массовое сохранение
+            updated_count = 0
+            for record in input_data_records:
+                square_key = f"square_{record.id}"
+                length_key = f"length_{record.id}"
+                event_key = f"event_{record.id}"
+
+                square_value = request.POST.get(square_key)
+                length_value = request.POST.get(length_key)
+                event_value = request.POST.get(event_key)
+
+                # Обновляем запись если есть изменения
+                if square_value is not None:
+                    record.square = float(square_value) if square_value else None
+                if length_value is not None:
+                    record.length = float(length_value) if length_value else None
+                if event_value:
+                    record.event = event_value
+
+                record.save()
+                updated_count += 1
+
+            messages.success(request, f'Успешно обновлено {updated_count} записей тротуаров!')
+            return redirect('app_calc:results_trotuar_view', project_id=project.id)
+
+        # Если записей нет, создаем базовые записи для тротуаров
+        if not input_data_records.exists():
+            # Создаем записи для тротуаров
+            trotuar_events = ['устройство', 'ремонт', 'сохранение']
+            for event in trotuar_events:
+                InputData.objects.create(
+                    project_id=project,
+                    element_id=element,
+                    property_id=property_obj,
+                    square=0,
+                    length=0,
+                    event=event
+                )
+            input_data_records = InputData.objects.filter(
+                project_id=project,
+                element_id=element,
+                property_id=property_obj
+            ).filter(event__in=['устройство', 'ремонт', 'установка', 'сохранение']).order_by('event')
+
+        # Получаем choices для тротуаров
+        event_choices_trotuar = [
+            ('устройство', 'Устройство'),
+            ('ремонт', 'Ремонт'),
+            ('установка', 'Установка'),
+            ('сохранение', 'Сохранение'),
+        ]
+
+        context = {
+            'project': project,
+            'element': element,
+            'property': property_obj,
+            'input_data_records': input_data_records,
+            'event_choices': event_choices_trotuar,
+        }
+
+        return render(request, 'edit_trotuar_data.html', context)
+
+    except (Element.DoesNotExist, Property.DoesNotExist) as e:
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('app_calc:results_trotuar_view', project_id=project.id)
+
+
+@login_required
+def v_edit_gazon_data(request, project_id):
+    """Редактирование записей газонов и озеленения"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    # Получаем параметры из GET запроса
+    element_name = request.GET.get('element')
+    property_name = request.GET.get('property')
+
+    if not all([element_name, property_name]):
+        messages.error(request, 'Не указаны элемент или характеристика для редактирования')
+        return redirect('app_calc:results_gazon_view', project_id=project.id)
+
+    try:
+        element = Element.objects.get(name_element=element_name)
+        property_obj = Property.objects.get(
+            element_id=element,
+            property_name=property_name
+        )
+
+        # Получаем ВСЕ записи InputData для озеленения этой характеристики
+        input_data_records = InputData.objects.filter(
+            project_id=project,
+            element_id=element,
+            property_id=property_obj
+        ).filter(event__in=['уничтожение', 'устройство', 'сохранение', 'восстановление']).order_by('event')
+
+        if request.method == 'POST':
+            # Обрабатываем массовое сохранение
+            updated_count = 0
+            for record in input_data_records:
+                square_key = f"square_{record.id}"
+                event_key = f"event_{record.id}"
+
+                square_value = request.POST.get(square_key)
+                event_value = request.POST.get(event_key)
+
+                # Обновляем запись если есть изменения
+                if square_value is not None:
+                    record.square = float(square_value) if square_value else None
+                if event_value:
+                    record.event = event_value
+
+                record.save()
+                updated_count += 1
+
+            messages.success(request, f'Успешно обновлено {updated_count} записей озеленения!')
+            return redirect('app_calc:results_gazon_view', project_id=project.id)
+
+        # Если записей нет, создаем базовые записи для озеленения
+        if not input_data_records.exists():
+            # Создаем записи для озеленения
+            gazon_events = ['уничтожение', 'устройство', 'сохранение', 'восстановление']
+            for event in gazon_events:
+                InputData.objects.create(
+                    project_id=project,
+                    element_id=element,
+                    property_id=property_obj,
+                    square=0,
+                    length=0,
+                    event=event
+                )
+            input_data_records = InputData.objects.filter(
+                project_id=project,
+                element_id=element,
+                property_id=property_obj
+            ).filter(event__in=['уничтожение', 'устройство', 'сохранение', 'восстановление']).order_by('event')
+
+        # Получаем choices для озеленения
+        event_choices_gazon = [
+            ('уничтожение', 'Уничтожение'),
+            ('устройство', 'Устройство'),
+            ('сохранение', 'Сохранение'),
+            ('восстановление', 'Восстановление'),
+        ]
+
+        # Вычисляем сумму для устройства, сохранения и восстановления
+        sum_value = sum([
+            record.square for record in input_data_records
+            if record.event in ['устройство', 'сохранение', 'восстановление'] and record.square
+        ])
+
+        context = {
+            'project': project,
+            'element': element,
+            'property': property_obj,
+            'input_data_records': input_data_records,
+            'event_choices': event_choices_gazon,
+            'sum_value': sum_value,
+        }
+
+        return render(request, 'edit_gazon_data.html', context)
+
+    except (Element.DoesNotExist, Property.DoesNotExist) as e:
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('app_calc:results_gazon_view', project_id=project.id)

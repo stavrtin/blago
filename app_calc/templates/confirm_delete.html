@@ -71,7 +71,7 @@
                 {% csrf_token %}
                 <button type="submit" class="btn-delete">Да, удалить</button>
             </form>
-            <a href="{% url 'app_calc:results_view' input_data.project_id.id %}" class="btn-cancel">Отмена</a>
+            <a href="{% url 'app_calc:results_balance_view' input_data.project_id.id %}" class="btn-cancel">Отмена</a>
         </div>
     </div>
 </body>

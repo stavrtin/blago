@@ -26,11 +26,31 @@ results_demontaj.html
 
             <!-- Элементы категории -->
             {% for item in category.items %}
-            <tr>
-                <td class="number-column">{{ item.number }}</td>
-                <td class="name-column">{{ item.name }}</td>
-                <td class="area-column">{{ item.area }}</td>
-                <td class="note-column">{{ item.note }}</td>
+            <tr class="demon-item" style="cursor: pointer;">
+                <td class="number-column">
+                    <a href="{% url 'app_calc:v_edit_demon_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.number }}
+                    </a>
+                </td>
+                <td class="name-column">
+                    <a href="{% url 'app_calc:v_edit_demon_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.name }}
+                    </a>
+                </td>
+                <td class="area-column">
+                    <a href="{% url 'app_calc:v_edit_demon_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                        {{ item.area }}
+                    </a>
+                </td>
+                <td class="note-column">
+                    <a href="{% url 'app_calc:v_edit_demon_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
+                        {{ item.note }}
+                    </a>
+                </td>
             </tr>
             {% endfor %}
             {% empty %}
@@ -41,4 +61,20 @@ results_demontaj.html
         </tbody>
     </table>
 </div>
+
+<style>
+    /* Стили для кликабельных строк демонтажа */
+    .statement-table tbody tr.demon-item:hover {
+        background-color: #fff0f0 !important;
+    }
+
+    .statement-table tbody tr.demon-item a:hover {
+        background-color: #ffebee;
+        border-radius: 3px;
+    }
+
+    .statement-table tbody tr.demon-item a {
+        transition: background-color 0.3s ease;
+    }
+</style>
 {% endblock %}

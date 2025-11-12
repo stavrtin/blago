@@ -597,3 +597,40 @@ h3 {
         width: 200px;
     }
 }
+
+/* Стили для тротуаров */
+.statement-table tbody tr.trotuar-item:hover {
+    background-color: #f0fff0 !important;
+}
+
+.statement-table tbody tr.trotuar-item a:hover {
+    background-color: #e8f5e8;
+    border-radius: 3px;
+}
+
+.statement-table tbody tr.trotuar-item a {
+    transition: background-color 0.3s ease;
+}
+
+/* Стили для газонов */
+.gazon-table tbody tr.gazon-item:hover {
+    background-color: #f0fff0 !important;
+}
+
+.gazon-table tbody tr.gazon-item a:hover {
+    background-color: #e8f5e8;
+    border-radius: 3px;
+}
+
+.gazon-table tbody tr.gazon-item a {
+    transition: background-color 0.3s ease;
+}
+
+.gazon-table .category-header:hover {
+    background-color: #d4edda !important;
+}
+
+.gazon-table .category-header a:hover {
+    background-color: #c3e6cb;
+    border-radius: 3px;
+}

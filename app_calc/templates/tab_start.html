@@ -441,6 +441,53 @@ tab_start.html
                     <td>{{ item.length|default:"" }}</td>
                     <td>{{ item.get_event_display|default:"" }}</td>
 
+                                        <td style="text-align: center;">
+    <!-- Кнопка редактирования -->
+    <a href="{% url 'app_calc:edit_input_data' item.id %}"
+       style="display: inline-block;
+              text-decoration: none;
+              padding: 6px 10px;
+              margin: 0 2px;
+              border-radius: 4px;
+              border: 1px solid #3498db;
+              background-color: #3498db;
+              color: white;
+              font-size: 16px;
+              cursor: pointer;
+              transition: all 0.3s ease;"
+       title="Редактировать запись"
+       onmouseover="this.style.backgroundColor='#2980b9'; this.style.borderColor='#2980b9'"
+       onmouseout="this.style.backgroundColor='#3498db'; this.style.borderColor='#3498db'">
+        ✏️
+    </a>
+
+    <!-- Кнопка удаления   "confirm dialog" / "confirmation dialog" (диалоговое окно подтверждения)-->
+    <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"
+       style="display: inline-block;
+              text-decoration: none;
+              padding: 6px 10px;
+              margin: 0 2px;
+              border-radius: 4px;
+              border: 1px solid #e74c3c;
+              background-color: #e74c3c;
+              color: white;
+              font-size: 16px;
+              cursor: pointer;
+              transition: all 0.3s ease;"
+       title="Удалить запись"
+       onclick="return confirm(`Удаление записи
+                               \- {{ item.element_id.name_element }}
+                               \- {{ item.property_id.property_name }}
+                               \- {{ item.get_event_display }}
+                               \- {{ item.square }} м2
+                               \nВы уверены в удалении?`)"
+       onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"
+       onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">
+        🗑️
+    </a>
+</td>
+
+
                 </tr>
                 {% empty %}
                 <tr>
@@ -530,7 +577,6 @@ tab_start.html
             });
         });
 
-<!--        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
     document.addEventListener('DOMContentLoaded', function() {
         const elementSelect = document.getElementById('element');
         const propertySelect = document.getElementById('property');
@@ -653,7 +699,7 @@ tab_start.html
             }
         });
     });
-<!--        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
 
 
     </script>

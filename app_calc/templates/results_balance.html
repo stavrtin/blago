@@ -408,6 +408,16 @@
             vertical-align: middle;
             font-weight: bold;
         }
+                /* Добавьте эти стили для улучшения внешнего вида ссылок */
+        .balance-table tbody tr.subcategory:hover {
+            background-color: #f0f8ff !important;
+        }
+
+        .balance-table tbody tr.subcategory a:hover {
+            background-color: #e3f2fd;
+            border-radius: 3px;
+        }
+
     </style>
 </head>
 <body>
@@ -446,7 +456,6 @@
         <!-- Content Area -->
         <div class="content-area">
             {% block content %}
-            results_balance.html
             <!-- Балансовые показатели по умолчанию -->
             <div class="balance-section">
                 <h2>Сравнительные балансовые показатели территории проектирования</h2>
@@ -498,10 +507,25 @@
                             {% if "Здания и сооружения" in key %}
                             <tr class="subcategory">
                                 <td></td>
-                                <td>{{ key|cut:"Здания и сооружения." }}</td>
-                                <td>{{ value.0 }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Здания и сооружения&property={{ key|cut:'Здания и сооружения.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px;">
+                                        {{ key|cut:"Здания и сооружения." }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Здания и сооружения&property={{ key|cut:'Здания и сооружения.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.0|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
-                                <td>{{ value.1 }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Здания и сооружения&property={{ key|cut:'Здания и сооружения.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.1|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
                             </tr>
                             {% endif %}
@@ -521,10 +545,25 @@
                             {% if "Покрытия" in key %}
                             <tr class="subcategory">
                                 <td></td>
-                                <td>{{ key|cut:"Покрытия." }}</td>
-                                <td>{{ value.0|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Покрытия&property={{ key|cut:'Покрытия.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px;">
+                                        {{ key|cut:"Покрытия." }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Покрытия&property={{ key|cut:'Покрытия.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.0|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
-                                <td>{{ value.1|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Покрытия&property={{ key|cut:'Покрытия.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.1|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
                             </tr>
                             {% endif %}
@@ -544,10 +583,25 @@
                             {% if "Озеленение (обводнение)." in key %}
                             <tr class="subcategory">
                                 <td></td>
-                                <td>{{ key|cut:"Озеленение (обводнение)." }}</td>
-                                <td>{{ value.0|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Озеленение (обводнение)&property={{ key|cut:'Озеленение (обводнение).' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px;">
+                                        {{ key|cut:"Озеленение (обводнение)." }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Озеленение (обводнение)&property={{ key|cut:'Озеленение (обводнение).' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.0|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
-                                <td>{{ value.1|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Озеленение (обводнение)&property={{ key|cut:'Озеленение (обводнение).' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.1|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
                             </tr>
                             {% endif %}
@@ -567,10 +621,25 @@
                             {% if "Бортовой камень." in key %}
                             <tr class="subcategory">
                                 <td></td>
-                                <td>{{ key|cut:"Бортовой камень." }}</td>
-                                <td>{{ value.0|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Бортовой камень&property={{ key|cut:'Бортовой камень.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px;">
+                                        {{ key|cut:"Бортовой камень." }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Бортовой камень&property={{ key|cut:'Бортовой камень.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.0|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
-                                <td>{{ value.1|default:"" }}</td>
+                                <td>
+                                    <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Бортовой камень&property={{ key|cut:'Бортовой камень.' }}"
+                                       style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
+                                        {{ value.1|default:"-" }}
+                                    </a>
+                                </td>
                                 <td></td>
                             </tr>
                             {% endif %}
@@ -581,5 +650,7 @@
             {% endblock %}
         </div>
     </div>
+
+
 </body>
 </html>
