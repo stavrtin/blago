@@ -3,6 +3,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from .models import Property, Element
+
+
 
 class SimpleUserCreationForm(forms.ModelForm):
     username = forms.CharField(
@@ -67,3 +70,23 @@ class CustomAuthenticationForm(AuthenticationForm):
             'required': 'true'
         })
     )
+
+
+class PropertyForm(forms.ModelForm):
+    class Meta:
+        model = Property
+        fields = ['element_id', 'property_name']
+        labels = {
+            'element_id': 'Элемент площади',
+            'property_name': 'Название характеристики'
+        }
+        widgets = {
+            'element_id': forms.Select(attrs={'class': 'form-control'}),
+            'property_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите название характеристики'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

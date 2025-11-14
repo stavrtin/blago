@@ -50,15 +50,43 @@ class Element(models.Model):
         verbose_name = 'Элемент площади'
 
 
+# class Property(models.Model):
+#     element_id = models.ForeignKey(Element,
+#                                     on_delete=models.CASCADE,
+#                                     verbose_name='Элемент площади')
+#     property_name = models.CharField(max_length=120,
+#                                      verbose_name='Характеристика')
+#
+#     def __str__(self):
+#         return f"{self.property_name}"
+#
+#     class Meta:
+#         db_table = 'property_tab'
+#         verbose_name = 'Характеристика объекта'
+#         verbose_name_plural = 'Характеристики объектов'
+
 class Property(models.Model):
     element_id = models.ForeignKey(Element,
                                     on_delete=models.CASCADE,
                                     verbose_name='Элемент площади')
     property_name = models.CharField(max_length=120,
                                      verbose_name='Характеристика')
+    # Добавляем связь с проектом для кастомных характеристик
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        verbose_name='Проект',
+        null=True,
+        blank=True,
+        help_text='Если характеристика привязана к проекту - она кастомная'
+    )
 
     def __str__(self):
         return f"{self.property_name}"
+
+    def is_custom(self):
+        """Проверка, является ли характеристика кастомной"""
+        return self.project is not None
 
     class Meta:
         db_table = 'property_tab'

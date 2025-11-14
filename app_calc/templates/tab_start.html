@@ -253,15 +253,27 @@ tab_start.html
                 👤 {{ user.username }} | <a href="{% url 'app_calc:logout' %}" style="color: white; text-decoration: none;">Выйти</a>
             </div>
 
+<!--            <nav class="nav-menu">-->
+<!--                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>-->
+<!--                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>-->
+<!--            </nav>-->
+
             <nav class="nav-menu">
-                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
-                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>
-            </nav>
+    <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
+    <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>
+    <!-- Новая кнопка -->
+    <a href="{% url 'app_calc:add_new_property' project.id %}" class="nav-item" style="background: #27ae60;">
+        ➕ Добавить характеристику
+    </a>
+</nav>
+
+
         </header>
 
         <!-- Блок 1: Ввод данных -->
         <div class="input-section">
-            <form method="POST" class="input-form" id="dataForm">
+<!--            <form method="POST" class="input-form" id="dataForm">-->
+            <form method="POST" class="input-form" id="dataForm" data-project-id="{{ project.id }}">
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-group">
@@ -462,29 +474,47 @@ tab_start.html
     </a>
 
     <!-- Кнопка удаления   "confirm dialog" / "confirmation dialog" (диалоговое окно подтверждения)-->
-    <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"
-       style="display: inline-block;
-              text-decoration: none;
-              padding: 6px 10px;
-              margin: 0 2px;
-              border-radius: 4px;
-              border: 1px solid #e74c3c;
-              background-color: #e74c3c;
-              color: white;
-              font-size: 16px;
-              cursor: pointer;
-              transition: all 0.3s ease;"
-       title="Удалить запись"
-       onclick="return confirm(`Удаление записи
-                               \- {{ item.element_id.name_element }}
-                               \- {{ item.property_id.property_name }}
-                               \- {{ item.get_event_display }}
-                               \- {{ item.square }} м2
-                               \nВы уверены в удалении?`)"
-       onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"
-       onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">
-        🗑️
-    </a>
+<!--    <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"-->
+<!--       style="display: inline-block;-->
+<!--              text-decoration: none;-->
+<!--              padding: 6px 10px;-->
+<!--              margin: 0 2px;-->
+<!--              border-radius: 4px;-->
+<!--              border: 1px solid #e74c3c;-->
+<!--              background-color: #e74c3c;-->
+<!--              color: white;-->
+<!--              font-size: 16px;-->
+<!--              cursor: pointer;-->
+<!--              transition: all 0.3s ease;"-->
+<!--       title="Удалить запись"-->
+<!--       onclick="return confirm(`Удаление записи-->
+<!--                               \- {{ item.element_id.name_element }}-->
+<!--                               \- {{ item.property_id.property_name }}-->
+<!--                               \- {{ item.get_event_display }}-->
+<!--                               \- {{ item.square }} м2-->
+<!--                               \nВы уверены в удалении?`)"-->
+<!--       onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"-->
+<!--       onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">-->
+<!--        🗑️-->
+<!--    </a>-->
+                                            <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"
+   style="display: inline-block;
+          text-decoration: none;
+          padding: 6px 10px;
+          margin: 0 2px;
+          border-radius: 4px;
+          border: 1px solid #e74c3c;
+          background-color: #e74c3c;
+          color: white;
+          font-size: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;"
+   title="Удалить запись"
+   onclick="return confirmDelete('{{ item.element_id.name_element }}', '{{ item.property_id.property_name }}', '{{ item.get_event_display }}', '{{ item.square|default:0 }}')"
+   onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"
+   onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">
+    🗑️
+</a>
 </td>
 
 
@@ -502,84 +532,11 @@ tab_start.html
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const elementSelect = document.getElementById('element');
-            const propertySelect = document.getElementById('property');
-
-            // Получаем все таблицы
-            const tablePokritiya = document.getElementById('table-pokritiya');
-            const tableBortovoy = document.getElementById('table-bortovoy');
-            const tableOzelenenie = document.getElementById('table-ozelenenie');
-
-            // Скрываем все таблицы изначально
-            function hideAllTables() {
-                tablePokritiya.classList.add('hidden');
-                tableBortovoy.classList.add('hidden');
-                tableOzelenenie.classList.add('hidden');
-            }
-
-            elementSelect.addEventListener('change', function() {
-                const elementId = this.value;
-                const selectedOption = this.options[this.selectedIndex];
-                const elementName = selectedOption.textContent;
-
-                // Сначала скрываем все таблицы
-                hideAllTables();
-
-                // Показываем соответствующую таблицу в зависимости от выбранного элемента
-                if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
-                    tablePokritiya.classList.remove('hidden');
-                } else if (elementName.includes('Бортовой камень')) {
-                    tableBortovoy.classList.remove('hidden');
-                } else if (elementName.includes('Озеленение')) {
-                    tableOzelenenie.classList.remove('hidden');
-                }
-
-                if (elementId) {
-                    // Запрос к API для получения характеристик
-                    fetch(`/api/properties/?element_id=${elementId}`)
-                        .then(response => response.json())
-                        .then(properties => {
-                            // Очищаем и заполняем выпадающий список характеристик
-                            propertySelect.innerHTML = '';
-                            propertySelect.disabled = false;
-
-                            const defaultOption = document.createElement('option');
-                            defaultOption.value = '';
-                            defaultOption.textContent = '-- Выберите характеристику --';
-                            propertySelect.appendChild(defaultOption);
-
-                            properties.forEach(prop => {
-                                const option = document.createElement('option');
-                                option.value = prop.id;
-                                option.textContent = prop.name;
-                                propertySelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching properties:', error);
-                            propertySelect.disabled = true;
-                            propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
-                        });
-                } else {
-                    propertySelect.disabled = true;
-                    propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
-                    hideAllTables();
-                }
-            });
-
-            // Валидация формы
-            document.getElementById('dataForm').addEventListener('submit', function(e) {
-                if (!elementSelect.value || !propertySelect.value) {
-                    e.preventDefault();
-                    alert('Пожалуйста, выберите элемент и характеристику');
-                }
-            });
-        });
-
     document.addEventListener('DOMContentLoaded', function() {
         const elementSelect = document.getElementById('element');
         const propertySelect = document.getElementById('property');
+        const form = document.getElementById('dataForm');
+        const projectId = '{{ project.id }}';  // Получаем project_id из шаблона
 
         // Получаем все таблицы
         const tablePokritiya = document.getElementById('table-pokritiya');
@@ -608,7 +565,9 @@ tab_start.html
         }
 
         // Обработчик клика по кнопке
-        toggleTableBtn.addEventListener('click', toggleTable);
+        if (toggleTableBtn) {
+            toggleTableBtn.addEventListener('click', toggleTable);
+        }
 
         // Функция фильтрации таблицы
         function filterTable() {
@@ -631,77 +590,136 @@ tab_start.html
         }
 
         // События для фильтров
-        filterElement.addEventListener('input', filterTable);
-        filterProperty.addEventListener('input', filterTable);
+        if (filterElement && filterProperty) {
+            filterElement.addEventListener('input', filterTable);
+            filterProperty.addEventListener('input', filterTable);
+        }
 
         // Скрываем все таблицы изначально
         function hideAllTables() {
-            tablePokritiya.classList.add('hidden');
-            tableBortovoy.classList.add('hidden');
-            tableOzelenenie.classList.add('hidden');
+            if (tablePokritiya) tablePokritiya.classList.add('hidden');
+            if (tableBortovoy) tableBortovoy.classList.add('hidden');
+            if (tableOzelenenie) tableOzelenenie.classList.add('hidden');
         }
 
-        elementSelect.addEventListener('change', function() {
-            const elementId = this.value;
-            const selectedOption = this.options[this.selectedIndex];
-            const elementName = selectedOption.textContent;
-
-            // Сначала скрываем все таблицы
-            hideAllTables();
-
-            // Показываем соответствующую таблицу в зависимости от выбранного элемента
-            if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
-                tablePokritiya.classList.remove('hidden');
-            } else if (elementName.includes('Бортовой камень')) {
-                tableBortovoy.classList.remove('hidden');
-            } else if (elementName.includes('Озеленение')) {
-                tableOzelenenie.classList.remove('hidden');
-            }
-
-            if (elementId) {
-                // Запрос к API для получения характеристик
-                fetch(`/api/properties/?element_id=${elementId}`)
-                    .then(response => response.json())
-                    .then(properties => {
-                        // Очищаем и заполняем выпадающий список характеристик
-                        propertySelect.innerHTML = '';
-                        propertySelect.disabled = false;
-
-                        const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.textContent = '-- Выберите характеристику --';
-                        propertySelect.appendChild(defaultOption);
-
-                        properties.forEach(prop => {
-                            const option = document.createElement('option');
-                            option.value = prop.id;
-                            option.textContent = prop.name;
-                            propertySelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching properties:', error);
-                        propertySelect.disabled = true;
-                        propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
-                    });
-            } else {
+        // Функция для загрузки характеристик
+        function loadProperties(elementId) {
+            if (!elementId) {
                 propertySelect.disabled = true;
                 propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
                 hideAllTables();
+                return;
             }
-        });
+
+            const selectedOption = elementSelect.options[elementSelect.selectedIndex];
+            const elementName = selectedOption.textContent;
+
+            // Показываем соответствующую таблицу в зависимости от выбранного элемента
+            hideAllTables();
+
+            if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
+                if (tablePokritiya) tablePokritiya.classList.remove('hidden');
+            } else if (elementName.includes('Бортовой камень')) {
+                if (tableBortovoy) tableBortovoy.classList.remove('hidden');
+            } else if (elementName.includes('Озеленение')) {
+                if (tableOzelenenie) tableOzelenenie.classList.remove('hidden');
+            }
+
+           // Запрос к API для получения характеристик с передачей project_id
+console.log('Fetching properties for element:', elementId, 'project:', projectId);
+
+fetch(`/api/properties/?element_id=${elementId}&project_id=${projectId}`)
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(properties => {
+        console.log('Received properties:', properties);
+
+        // Очищаем и заполняем выпадающий список характеристик
+        propertySelect.innerHTML = '';
+        propertySelect.disabled = false;
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- Выберите характеристику --';
+        propertySelect.appendChild(defaultOption);
+
+        if (properties.length === 0) {
+            const noDataOption = document.createElement('option');
+            noDataOption.value = '';
+            noDataOption.textContent = '-- Нет доступных характеристик --';
+            propertySelect.appendChild(noDataOption);
+        } else {
+            properties.forEach(prop => {
+                const option = document.createElement('option');
+                option.value = prop.id;
+                option.textContent = prop.name;
+                propertySelect.appendChild(option);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching properties:', error);
+        propertySelect.disabled = true;
+        propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
+    });
+        }
+
+        // Обработчик изменения выбора элемента
+        if (elementSelect) {
+            elementSelect.addEventListener('change', function() {
+                const elementId = this.value;
+                loadProperties(elementId);
+            });
+        }
 
         // Валидация формы
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
-            if (!elementSelect.value || !propertySelect.value) {
-                e.preventDefault();
-                alert('Пожалуйста, выберите элемент и характеристику');
-            }
-        });
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!elementSelect.value || !propertySelect.value) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите элемент и характеристику');
+                    return;
+                }
+
+                // Дополнительная проверка: хотя бы одно поле должно быть заполнено
+                const activeTable = document.querySelector('.data-table:not(.hidden)');
+                if (activeTable) {
+                    const inputs = activeTable.querySelectorAll('input[type="number"]');
+                    let hasData = false;
+
+                    inputs.forEach(input => {
+                        if (input.value && parseFloat(input.value) > 0) {
+                            hasData = true;
+                        }
+                    });
+
+                    if (!hasData) {
+                        e.preventDefault();
+                        alert('Пожалуйста, заполните хотя бы одно поле с данными');
+                    }
+                }
+            });
+        }
+
+        // Инициализация: скрываем все таблицы при загрузке
+        hideAllTables();
+
+        // Если элемент уже выбран (при возврате на страницу), загружаем его характеристики
+        if (elementSelect && elementSelect.value) {
+            loadProperties(elementSelect.value);
+        }
     });
 
+    // Функция для подтверждения удаления (улучшенная версия)
+    function confirmDelete(elementName, propertyName, eventType, square) {
+        return confirm(`Удаление записи:\n• ${elementName}\n• ${propertyName}\n• ${eventType}\n• ${square} м²\n\nВы уверены в удалении?`);
+    }
+</script>
 
-
-    </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ from django.db.models.functions import Coalesce
 from .models import InputData, Project, Element, Property
 # from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .forms import SimpleUserCreationForm, CustomAuthenticationForm
+from .forms import PropertyForm, Property
 
 import pandas as pd
 
@@ -1401,3 +1402,52 @@ def v_edit_gazon_data(request, project_id):
     except (Element.DoesNotExist, Property.DoesNotExist) as e:
         messages.error(request, f'Ошибка: {str(e)}')
         return redirect('app_calc:results_gazon_view', project_id=project.id)
+
+
+@login_required
+def add_new_property(request, project_id):
+    """Добавление новой характеристики для проекта"""
+    project = get_object_or_404(Project, pk=project_id, user=request.user)
+
+    if request.method == 'POST':
+        form = PropertyForm(request.POST)
+        if form.is_valid():
+            property_obj = form.save(commit=False)
+            property_obj.project = project  # Привязываем к проекту
+            property_obj.save()
+
+            messages.success(request, f'Характеристика "{property_obj.property_name}" успешно добавлена!')
+            return redirect('app_calc:tab_start_view', project_id=project.id)
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = PropertyForm()
+
+    context = {
+        'project': project,
+        'form': form
+    }
+    return render(request, 'add_new_property.html', context)
+
+
+# @login_required
+def get_properties(request):
+    """API для получения характеристик по элементу с учетом проекта"""
+    element_id = request.GET.get('element_id')
+    project_id = request.GET.get('project_id')
+
+    if not element_id:
+        return JsonResponse([], safe=False)
+
+    try:
+        # Получаем базовые характеристики (без проекта) и кастомные для текущего проекта
+        properties = Property.objects.filter(
+            Q(element_id_id=element_id) &
+            (Q(project__isnull=True) | Q(project_id=project_id))
+        ).distinct().order_by('property_name')
+
+        properties_list = [{'id': prop.id, 'name': prop.property_name} for prop in properties]
+        return JsonResponse(properties_list, safe=False)
+    except Exception as e:
+        print(f"Error fetching properties: {e}")
+        return JsonResponse([], safe=False)

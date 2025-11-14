@@ -13,7 +13,7 @@ edit_balance_data,
 v_edit_demon_data,
 v_edit_trotuar_data,
 v_edit_gazon_data,
-
+add_new_property,
 )
 
 app_name = 'app_calc'
@@ -41,5 +41,9 @@ path('project/<int:project_id>/edit-from-balance/', edit_balance_data, name='edi
 path('project/<int:project_id>/edit-demon-data/', v_edit_demon_data, name='v_edit_demon_data'),
 path('project/<int:project_id>/edit-trotuar-data/', v_edit_trotuar_data, name='v_edit_trotuar_data'),
 path('project/<int:project_id>/edit-gazon-data/', v_edit_gazon_data, name='v_edit_gazon_data'),
+# ------------------------ новые характеристики -------
+path('project/<int:project_id>/add-property/', add_new_property, name='add_new_property'),
+path('get_properties/', get_properties, name='get_properties'),
+
 
 ]
