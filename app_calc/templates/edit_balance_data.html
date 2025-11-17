@@ -196,6 +196,22 @@
             min-width: 40px;
         }
 
+        /* Стили для авторасчета площади */
+        .calculated-area {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .auto-calculation-info {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .container {
@@ -222,7 +238,6 @@
     </style>
 </head>
 <body>
-edit_balance_data.html
     <div class="container">
         <!-- Шапка -->
         <div class="header">
@@ -231,11 +246,16 @@ edit_balance_data.html
                 <h2>{{ element.name_element }} → {{ property.property_name }}</h2>
                 <p><strong>Проект:</strong> {{ project.name }}</p>
                 <p><strong>Общая площадь проекта:</strong> {{ project.total_square }} м²</p>
+                {% if element.name_element == 'Бортовой камень' %}
+                <div class="auto-calculation-info">
+                    💡 <strong>Авторасчет площади:</strong> Площадь рассчитывается автоматически как Длина × Ширина
+                </div>
+                {% endif %}
             </div>
         </div>
 
         <!-- Форма редактирования -->
-        <form method="post">
+        <form method="post" id="editForm">
             {% csrf_token %}
 
             <div class="form-section">
@@ -269,12 +289,24 @@ edit_balance_data.html
                             </td>
                             <td class="value-column">
                                 <div class="input-group">
+                                    {% if element.name_element == 'Бортовой камень' %}
+                                    <input type="number"
+                                           name="square_{{ record.id }}"
+                                           value="{{ record.square|default:0 }}"
+                                           step="0.1"
+                                           min="0"
+                                           placeholder="0.0"
+                                           readonly
+                                           class="calculated-area"
+                                           id="square_{{ record.id }}">
+                                    {% else %}
                                     <input type="number"
                                            name="square_{{ record.id }}"
                                            value="{{ record.square|default:0 }}"
                                            step="0.1"
                                            min="0"
                                            placeholder="0.0">
+                                    {% endif %}
                                     <span class="unit">м²</span>
                                 </div>
                             </td>
@@ -285,7 +317,10 @@ edit_balance_data.html
                                            value="{{ record.length|default:0 }}"
                                            step="0.1"
                                            min="0"
-                                           placeholder="0.0">
+                                           placeholder="0.0"
+                                           class="length-input"
+                                           data-record-id="{{ record.id }}"
+                                           {% if element.name_element == 'Бортовой камень' %}oninput="calculateBortArea(this)"{% endif %}>
                                     <span class="unit">м</span>
                                 </div>
                             </td>
@@ -331,13 +366,63 @@ edit_balance_data.html
                 <li>Выберите соответствующий тип работ из выпадающего списка</li>
                 <li>Нажмите "Сохранить все изменения" для применения изменений</li>
                 <li>Используйте значок 🗑️ для удаления конкретной записи</li>
+                {% if element.name_element == 'Бортовой камень' %}
+                <li><strong>Для бортового камня:</strong> площадь рассчитывается автоматически при вводе длины</li>
+                {% endif %}
             </ul>
         </div>
     </div>
 
     <script>
-        // Добавляем валидацию числовых полей
+        // Функция для извлечения ширины из названия характеристики
+        function extractWidthFromProperty(propertyName) {
+            const match = propertyName.match(/ш[.\s]*(\d+(?:[.,]\d+)?)/i);
+            if (match && match[1]) {
+                return parseFloat(match[1].replace(',', '.'));
+            }
+            return 0;
+        }
+
+        // Функция для расчета площади бортового камня
+        function calculateBortArea(lengthInput) {
+            const recordId = lengthInput.getAttribute('data-record-id');
+            const lengthValue = lengthInput.value;
+            const propertyName = '{{ property.property_name }}';
+
+            // Извлекаем ширину из названия характеристики
+            const width = extractWidthFromProperty(propertyName);
+
+            if (width > 0 && lengthValue) {
+                // Переводим ширину из мм в метры и рассчитываем площадь
+                const widthInMeters = width / 1000;
+                const calculatedArea = (parseFloat(lengthValue) * widthInMeters).toFixed(2);
+
+                // Обновляем поле площади
+                const squareInput = document.getElementById('square_' + recordId);
+                if (squareInput) {
+                    squareInput.value = calculatedArea;
+                }
+            } else if (lengthValue === '') {
+                // Очищаем поле площади если длина пустая
+                const squareInput = document.getElementById('square_' + recordId);
+                if (squareInput) {
+                    squareInput.value = '0';
+                }
+            }
+        }
+
+        // Инициализация: рассчитываем площади для существующих значений длины
         document.addEventListener('DOMContentLoaded', function() {
+            {% if element.name_element == 'Бортовой камень' %}
+            const lengthInputs = document.querySelectorAll('.length-input');
+            lengthInputs.forEach(input => {
+                if (input.value) {
+                    calculateBortArea(input);
+                }
+            });
+            {% endif %}
+
+            // Добавляем валидацию числовых полей
             const numberInputs = document.querySelectorAll('input[type="number"]');
             numberInputs.forEach(input => {
                 input.addEventListener('input', function() {
@@ -365,7 +450,7 @@ edit_balance_data.html
 
             // Предупреждение при уходе со страницы с несохраненными изменениями
             let formChanged = false;
-            const form = document.querySelector('form');
+            const form = document.getElementById('editForm');
             form.addEventListener('change', function() {
                 formChanged = true;
             });

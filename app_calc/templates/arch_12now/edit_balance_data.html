@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование данных баланса</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .object-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Редактирование данных баланса</h1>
+
+        <div class="object-info">
+            <h3>{{ element_name }}</h3>
+            <p><strong>Характеристика:</strong> {{ property_name }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="hidden" name="element_name" value="{{ element_name }}">
+            <input type="hidden" name="property_name" value="{{ property_name }}">
+
+            <div class="form-group">
+                <label for="square_now">Площадь (существующее положение):</label>
+                <input type="number" id="square_now" name="square_now"
+                       value="{{ square_now|default:0 }}" step="0.1" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="square_proj">Площадь (проектное положение):</label>
+                <input type="number" id="square_proj" name="square_proj"
+                       value="{{ square_proj|default:0 }}" step="0.1" min="0">
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Сохранить изменения</button>
+                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="back-link">
+                    ← Назад к балансам
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

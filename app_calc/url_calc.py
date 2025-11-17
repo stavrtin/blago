@@ -14,6 +14,9 @@ v_edit_demon_data,
 v_edit_trotuar_data,
 v_edit_gazon_data,
 add_new_property,
+edit_input_data,
+edit_single_input_data,
+
 )
 
 app_name = 'app_calc'
@@ -35,15 +38,18 @@ urlpatterns = [
     path('project/<int:project_id>/demontaj/', results_demontaj_view, name='results_demontaj_view'),
     path('project/<int:project_id>/gazon/', results_gazon_view, name='results_gazon_view'),
     path('project/<int:project_id>/trotuar/', results_trotuar_view, name='results_trotuar_view'),
-# path('project/<int:project_id>/edit-balance/', edit_balance_data, name='edit_balance_data'),
-#     ------------------- правки балансов --------------------
-path('project/<int:project_id>/edit-from-balance/', edit_balance_data, name='edit_balance_data'),
-path('project/<int:project_id>/edit-demon-data/', v_edit_demon_data, name='v_edit_demon_data'),
-path('project/<int:project_id>/edit-trotuar-data/', v_edit_trotuar_data, name='v_edit_trotuar_data'),
-path('project/<int:project_id>/edit-gazon-data/', v_edit_gazon_data, name='v_edit_gazon_data'),
-# ------------------------ новые характеристики -------
-path('project/<int:project_id>/add-property/', add_new_property, name='add_new_property'),
-path('get_properties/', get_properties, name='get_properties'),
+    # path('project/<int:project_id>/edit-balance/', edit_balance_data, name='edit_balance_data'),
+    #     ------------------- правки балансов --------------------
+    path('project/<int:project_id>/edit-from-balance/', edit_balance_data, name='edit_balance_data'),
+    path('project/<int:project_id>/edit-demon-data/', v_edit_demon_data, name='v_edit_demon_data'),
+    path('project/<int:project_id>/edit-trotuar-data/', v_edit_trotuar_data, name='v_edit_trotuar_data'),
+    path('project/<int:project_id>/edit-gazon-data/', v_edit_gazon_data, name='v_edit_gazon_data'),
+    # ------------------------ новые характеристики -------
+    path('project/<int:project_id>/add-property/', add_new_property, name='add_new_property'),
+    path('get_properties/', get_properties, name='get_properties'),
+
+    path('edit-single-input-data/<int:record_id>/', edit_single_input_data,  name='edit_single_input_data'),
+
 
 
 ]

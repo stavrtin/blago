@@ -72,21 +72,67 @@ class CustomAuthenticationForm(AuthenticationForm):
     )
 
 
+# class PropertyForm(forms.ModelForm):
+#     class Meta:
+#         model = Property
+#         fields = ['element_id', 'property_name']
+#         labels = {
+#             'element_id': 'Элемент площади',
+#             'property_name': 'Название характеристики'
+#         }
+#         widgets = {
+#             'element_id': forms.Select(attrs={'class': 'form-control'}),
+#             'property_name': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'Введите название характеристики'
+#             })
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+
 class PropertyForm(forms.ModelForm):
+    width = forms.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=1000,
+        label='Ширина (см)',
+        help_text='Только для бортового камня'
+    )
+
     class Meta:
         model = Property
         fields = ['element_id', 'property_name']
-        labels = {
-            'element_id': 'Элемент площади',
-            'property_name': 'Название характеристики'
-        }
-        widgets = {
-            'element_id': forms.Select(attrs={'class': 'form-control'}),
-            'property_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите название характеристики'
-            })
-        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def clean(self):
+        cleaned_data = super().clean()
+        element_id = cleaned_data.get('element_id')
+        width = cleaned_data.get('width')
+        property_name = cleaned_data.get('property_name')
+
+        # Проверяем, что для бортового камня указана ширина
+        if element_id and 'Бортовой камень' in element_id.name_element and not width:
+            raise forms.ValidationError('Для бортового камня необходимо указать ширину.')
+
+        return cleaned_data
+
+    # def save(self, commit=True):
+    #     instance = super().save(commit=False)
+    #
+    #     # Если это бортовой камень и указана ширина, добавляем "ш.XXX" к названию
+    #     if (instance.element_id and
+    #             'Бортовой камень' in instance.element_id.name_element and
+    #             self.cleaned_data.get('width')):
+    #         width = self.cleaned_data['width']
+    #         instance.property_name = f"{instance.property_name}"
+    #
+    #     if commit:
+    #         instance.save()
+    #     return instance
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Никаких изменений property_name - JavaScript уже всё сделал
+        if commit:
+            instance.save()
+        return instance

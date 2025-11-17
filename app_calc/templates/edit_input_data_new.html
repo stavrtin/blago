@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактирование тротуаров</title>
+    <title>Редактирование данных - {{ project.name }}</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -29,7 +29,7 @@
         }
 
         .header {
-            background: #27ae60;
+            background: #9b59b6;
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -43,7 +43,7 @@
         }
 
         .object-info {
-            background: #229954;
+            background: #8e44ad;
             padding: 15px;
             border-radius: 6px;
             margin-top: 10px;
@@ -108,8 +108,8 @@
             width: 150px;
         }
 
-        .records-table .unit-column {
-            width: 80px;
+        .records-table .actions-column {
+            width: 100px;
             text-align: center;
         }
 
@@ -125,8 +125,8 @@
         .records-table input:focus,
         .records-table select:focus {
             outline: none;
-            border-color: #27ae60;
-            box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.2);
         }
 
         .form-actions {
@@ -153,14 +153,14 @@
         }
 
         .btn-primary {
-            background: #27ae60;
+            background: #9b59b6;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #229954;
+            background: #8e44ad;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
         }
 
         .btn-secondary {
@@ -170,6 +170,16 @@
 
         .btn-secondary:hover {
             background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
             transform: translateY(-2px);
         }
 
@@ -212,6 +222,25 @@
             border-left: 4px solid #3498db;
         }
 
+        /* Стили для редактируемых строк */
+        .editing-row {
+            background-color: #fff3cd !important;
+        }
+
+        .delete-btn {
+            color: #e74c3c;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .container {
@@ -238,15 +267,15 @@
     </style>
 </head>
 <body>
-edit_trotuar_data.html
+edit_input_data_new.html
     <div class="container">
         <!-- Шапка -->
         <div class="header">
-            <h1>🛣️ Редактирование тротуаров и дорожек</h1>
+            <h1>✏️ Редактирование всех записей элемента</h1>
             <div class="object-info">
                 <h2>{{ element.name_element }} → {{ property.property_name }}</h2>
                 <p><strong>Проект:</strong> {{ project.name }}</p>
-                <p><strong>Тип работ:</strong> Устройство/Ремонт/Установка/Сохранение</p>
+                <p><strong>Количество записей:</strong> {{ input_data_records|length }}</p>
                 {% if element.name_element == 'Бортовой камень' %}
                 <div class="auto-calculation-info">
                     💡 <strong>Авторасчет площади:</strong> Площадь рассчитывается автоматически как Длина × Ширина
@@ -260,7 +289,7 @@ edit_trotuar_data.html
             {% csrf_token %}
 
             <div class="form-section">
-                <div class="section-title">🏗️ Редактирование записей тротуаров</div>
+                <div class="section-title">📝 Редактирование всех записей "{{ element.name_element }} - {{ property.property_name }}"</div>
 
                 {% if input_data_records %}
                 <table class="records-table">
@@ -270,15 +299,15 @@ edit_trotuar_data.html
                             <th class="event-column">Тип работ</th>
                             <th class="value-column">Площадь</th>
                             <th class="value-column">Длина</th>
-                            <th class="unit-column">Действия</th>
+                            <th class="actions-column">Действия</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for record in input_data_records %}
-                        <tr>
+                        <tr class="editing-row">
                             <td class="number-column">{{ forloop.counter }}</td>
                             <td class="event-column">
-                                <select name="event_{{ record.id }}">
+                                <select name="event_{{ record.id }}" required>
                                     <option value="">-- Выберите тип работ --</option>
                                     {% for value, label in event_choices %}
                                     <option value="{{ value }}"
@@ -306,7 +335,8 @@ edit_trotuar_data.html
                                            value="{{ record.square|default:0 }}"
                                            step="0.1"
                                            min="0"
-                                           placeholder="0.0">
+                                           placeholder="0.0"
+                                           required>
                                     {% endif %}
                                     <span class="unit">м²</span>
                                 </div>
@@ -325,14 +355,13 @@ edit_trotuar_data.html
                                     <span class="unit">м</span>
                                 </div>
                             </td>
-                            <td class="unit-column">
-                                {% if record.id %}
+                            <td class="actions-column">
                                 <a href="{% url 'app_calc:confirm_delete_input_data' record.id %}"
-                                   style="color: #e74c3c; text-decoration: none; font-size: 12px;"
-                                   onclick="return confirm('Удалить эту запись тротуара?')">
+                                   class="delete-btn"
+                                   title="Удалить запись"
+                                   onclick="return confirm('Удалить запись с типом работ \"{{ record.get_event_display }}\"?')">
                                     🗑️
                                 </a>
-                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -340,7 +369,7 @@ edit_trotuar_data.html
                 </table>
                 {% else %}
                 <div class="empty-message">
-                    <p>Нет записей тротуаров для редактирования</p>
+                    <p>Нет записей для редактирования</p>
                 </div>
                 {% endif %}
             </div>
@@ -348,31 +377,53 @@ edit_trotuar_data.html
             <!-- Кнопки действий -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    💾 Сохранить изменения
+                    💾 Сохранить все изменения
                 </button>
-                <a href="{% url 'app_calc:results_trotuar_view' project.id %}" class="btn btn-secondary">
-                    ← Назад к тротуарам
-                </a>
                 <a href="{% url 'app_calc:tab_start_view' project.id %}" class="btn btn-secondary">
-                    ➕ Добавить данные
+                    ← Назад к вводу данных
+                </a>
+                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="btn btn-secondary">
+                    📊 К балансам
                 </a>
             </div>
         </form>
 
         <!-- Информационный блок -->
         <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 6px; font-size: 14px;">
-            <h3 style="color: #2c3e50; margin-bottom: 10px;">💡 Как работать с формой тротуаров:</h3>
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">💡 Как работать с формой редактирования:</h3>
             <ul style="padding-left: 20px;">
-                <li>Измените значения площади и длины для устройства, ремонта, установки или сохранения</li>
-                <li>Выберите соответствующий тип работ из выпадающего списка</li>
-                <li>Нажмите "Сохранить изменения" для применения</li>
-                <li>Используйте значок 🗑️ для удаления конкретной записи</li>
+                <li>Измените значения для всех записей с элементом "{{ element.name_element }}" и характеристикой "{{ property.property_name }}"</li>
+                <li>Выберите соответствующие типы работ из выпадающих списков</li>
+                <li>Нажмите "Сохранить все изменения" для применения ко всем записям</li>
+                <li>Используйте 🗑️ для удаления конкретных записей</li>
                 {% if element.name_element == 'Бортовой камень' %}
                 <li><strong>Для бортового камня:</strong> площадь рассчитывается автоматически при вводе длины</li>
-                {% else %}
-                <li><strong>Для покрытий:</strong> заполняйте поле "Площадь"</li>
+                {% elif element.name_element == 'Покрытия' or element.name_element == 'Здания и сооружения' %}
+                <li><strong>Для покрытий и зданий:</strong> заполняйте поле "Площадь"</li>
+                {% elif element.name_element == 'Озеленение (обводнение)' %}
+                <li><strong>Для озеленения:</strong> заполняйте поле "Площадь"</li>
                 {% endif %}
             </ul>
+        </div>
+
+        <!-- Блок с текущими данными -->
+        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 6px; font-size: 14px; border-left: 4px solid #ffc107;">
+            <h4 style="color: #856404; margin-bottom: 10px;">📋 Сводка по записям:</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <div><strong>Элемент:</strong> {{ element.name_element }}</div>
+                <div><strong>Характеристика:</strong> {{ property.property_name }}</div>
+                <div><strong>Количество записей:</strong> {{ input_data_records|length }}</div>
+                <div><strong>Общая площадь:</strong>
+                    {% with total=0 %}
+                        {% for record in input_data_records %}
+                            {% if record.square %}
+                                {% with total=total|add:record.square %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ total|floatformat:2 }} м²
+                    {% endwith %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -437,38 +488,106 @@ edit_trotuar_data.html
 
             // Подсветка измененных полей
             const initialValues = {};
-            numberInputs.forEach(input => {
-                initialValues[input.name] = input.value;
 
-                input.addEventListener('change', function() {
-                    if (this.value !== initialValues[this.name]) {
-                        this.style.backgroundColor = '#fff3cd';
-                        this.style.borderColor = '#ffc107';
-                    } else {
-                        this.style.backgroundColor = '';
-                        this.style.borderColor = '';
-                    }
+            // Сохраняем начальные значения всех полей
+            document.querySelectorAll('select, input').forEach(field => {
+                initialValues[field.name] = field.value;
+            });
+
+            function updateFieldAppearance(field) {
+                if (field.value !== initialValues[field.name]) {
+                    field.style.backgroundColor = '#fff3cd';
+                    field.style.borderColor = '#ffc107';
+                } else {
+                    field.style.backgroundColor = '';
+                    field.style.borderColor = '';
+                }
+            }
+
+            // Слушатели изменений для всех полей
+            document.querySelectorAll('select, input').forEach(field => {
+                field.addEventListener('change', function() {
+                    updateFieldAppearance(this);
+                });
+                field.addEventListener('input', function() {
+                    updateFieldAppearance(this);
                 });
             });
 
             // Предупреждение при уходе со страницы с несохраненными изменениями
             let formChanged = false;
-            const form = document.getElementById('editForm');
-            form.addEventListener('change', function() {
-                formChanged = true;
-            });
+
+            function checkFormChanges() {
+                let changed = false;
+                document.querySelectorAll('select, input').forEach(field => {
+                    if (field.value !== initialValues[field.name]) {
+                        changed = true;
+                    }
+                });
+                return changed;
+            }
 
             window.addEventListener('beforeunload', function(e) {
-                if (formChanged) {
+                if (checkFormChanges()) {
                     e.preventDefault();
-                    e.returnValue = '';
+                    e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите уйти?';
+                    return 'У вас есть несохраненные изменения. Вы уверены, что хотите уйти?';
                 }
             });
 
-            form.addEventListener('submit', function() {
+            document.getElementById('editForm').addEventListener('submit', function() {
                 formChanged = false;
             });
+
+            // Проверка заполнения обязательных полей перед отправкой
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                let hasErrors = false;
+                const eventSelects = document.querySelectorAll('select[name^="event_"]');
+
+                eventSelects.forEach(select => {
+                    if (!select.value) {
+                        select.style.borderColor = '#e74c3c';
+                        hasErrors = true;
+                    } else {
+                        select.style.borderColor = '';
+                    }
+                });
+
+                if (hasErrors) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите тип работ для всех записей');
+                    return;
+                }
+
+                // Проверяем, что хотя бы одно поле заполнено (площадь или длина)
+                let hasData = false;
+                const squareInputs = document.querySelectorAll('input[name^="square_"]');
+                const lengthInputs = document.querySelectorAll('input[name^="length_"]');
+
+                squareInputs.forEach(input => {
+                    if (input.value && parseFloat(input.value) > 0) {
+                        hasData = true;
+                    }
+                });
+
+                lengthInputs.forEach(input => {
+                    if (input.value && parseFloat(input.value) > 0) {
+                        hasData = true;
+                    }
+                });
+
+                if (!hasData) {
+                    e.preventDefault();
+                    alert('Пожалуйста, заполните хотя бы одно поле (площадь или длина) для записей');
+                    return;
+                }
+            });
         });
+
+        // Функция для подтверждения действия
+        function confirmAction(message) {
+            return confirm(message);
+        }
     </script>
 </body>
 </html>

@@ -1451,3 +1451,88 @@ def get_properties(request):
     except Exception as e:
         print(f"Error fetching properties: {e}")
         return JsonResponse([], safe=False)
+
+
+@login_required
+def edit_single_input_data(request, record_id):
+    """Редактирование ВСЕХ записей с одинаковым элементом и характеристикой"""
+    record = get_object_or_404(InputData, id=record_id)
+    project = record.project_id
+
+    # Проверяем, что запись принадлежит проекту пользователя
+    if project.user != request.user:
+        messages.error(request, 'У вас нет доступа к этой записи')
+        return redirect('app_calc:projects_list')
+
+    if request.method == 'POST':
+        # Обработка сохранения изменений для ВСЕХ записей
+        updated_count = 0
+        input_data_records = InputData.objects.filter(
+            project_id=project,
+            element_id=record.element_id,
+            property_id=record.property_id
+        )
+
+        for record_item in input_data_records:
+            event_key = f"event_{record_item.id}"
+            square_key = f"square_{record_item.id}"
+            length_key = f"length_{record_item.id}"
+
+            event = request.POST.get(event_key)
+            square = request.POST.get(square_key)
+            length = request.POST.get(length_key)
+
+            # Обновляем запись если есть изменения
+            changed = False
+            if event and record_item.event != event:
+                record_item.event = event
+                changed = True
+
+            if square is not None:
+                try:
+                    square_float = float(square) if square else None
+                    if record_item.square != square_float:
+                        record_item.square = square_float
+                        changed = True
+                except (TypeError, ValueError):
+                    pass
+
+            if length is not None:
+                try:
+                    length_float = float(length) if length else None
+                    if record_item.length != length_float:
+                        record_item.length = length_float
+                        changed = True
+                except (TypeError, ValueError):
+                    pass
+
+            if changed:
+                record_item.save()
+                updated_count += 1
+
+        if updated_count > 0:
+            messages.success(request, f'Успешно обновлено {updated_count} записей!')
+        else:
+            messages.info(request, 'Изменений не обнаружено')
+
+        return redirect('app_calc:tab_start_view', project_id=project.id)
+
+    # Получаем ВСЕ записи для этого элемента и характеристики в проекте
+    input_data_records = InputData.objects.filter(
+        project_id=project,
+        element_id=record.element_id,
+        property_id=record.property_id
+    ).order_by('event')
+
+    event_choices = InputData.EVENT_CHOICES
+
+    context = {
+        'project': project,
+        'element': record.element_id,
+        'property': record.property_id,
+        'input_data_records': input_data_records,
+        'event_choices': event_choices,
+        'current_record': record,  # Сохраняем для обратной совместимости
+    }
+
+    return render(request, 'edit_input_data_new.html', context)

@@ -421,6 +421,7 @@
     </style>
 </head>
 <body>
+results_balance.html
     <div class="container">
         <!-- Header -->
         <header class="header">
@@ -432,8 +433,8 @@
             </div>
             <nav class="nav-menu">
                 <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
-                <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Ввод данных</a>
-                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Итоги (старая версия)</a>
+                <a href="{% url 'app_calc:tab_start_view' project.id %}" class="nav-item">Вернуться к вводу данных</a>
+<!--                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Итоги (старая версия)</a>-->
             </nav>
         </header>
 
@@ -459,9 +460,9 @@
             <!-- Балансовые показатели по умолчанию -->
             <div class="balance-section">
                 <h2>Сравнительные балансовые показатели территории проектирования</h2>
-                <div class="balance-nav">
-                    <a href="{% url 'app_calc:v_edit_all_input_data' project.id %}" class="nav-item">Корректировка</a>
-                </div>
+<!--                <div class="balance-nav">-->
+<!--                    <a href="{% url 'app_calc:v_edit_all_input_data' project.id %}" class="nav-item">Корректировка</a>-->
+<!--                </div>-->
 
                 <table class="balance-table">
                     <thead>
@@ -498,9 +499,9 @@
                             <td><b>2</b></td>
                             <td>Здания и сооружения</td>
                             <td>{{ buildings_total_now }}</td>
-                            <td class="percentage">{{ buildings_percentage_now|floatformat:2 }}%</td>
+                            <td class="percentage">{{ buildings_percentage_now|floatformat:1 }}%</td>
                             <td>{{ buildings_total_proj }}</td>
-                            <td class="percentage">{{ buildings_percentage_proj|floatformat:2 }}%</td>
+                            <td class="percentage">{{ buildings_percentage_proj|floatformat:1 }}%</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -536,9 +537,9 @@
                             <td><b>3</b></td>
                             <td>Покрытия</td>
                             <td>{{ coverings_total_now }}</td>
-                            <td class="percentage">{{ coverings_percentage_now|floatformat:2 }}%</td>
+                            <td class="percentage">{{ coverings_percentage_now|floatformat:1 }}%</td>
                             <td>{{ coverings_total_proj }}</td>
-                            <td class="percentage">{{ coverings_percentage_proj|floatformat:2 }}%</td>
+                            <td class="percentage">{{ coverings_percentage_proj|floatformat:1 }}%</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -574,9 +575,9 @@
                             <td>4</td>
                             <td>Площадь озеленения</td>
                             <td>{{ landscaping_total_now }}</td>
-                            <td class="percentage">{{ landscaping_percentage_now|floatformat:2 }}%</td>
+                            <td class="percentage">{{ landscaping_percentage_now|floatformat:1 }}%</td>
                             <td>{{ landscaping_total_proj }}</td>
-                            <td class="percentage">{{ landscaping_percentage_proj|floatformat:2 }}%</td>
+                            <td class="percentage">{{ landscaping_percentage_proj|floatformat:1 }}%</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -612,9 +613,9 @@
                             <td>5</td>
                             <td>Бортовой камень</td>
                             <td>{{ stone_total_now }}</td>
-                            <td class="percentage">{{ stone_percentage_now|floatformat:2 }}%</td>
+                            <td class="percentage">{{ stone_percentage_now|floatformat:1 }}%</td>
                             <td>{{ stone_total_proj }}</td>
-                            <td class="percentage">{{ stone_percentage_proj|floatformat:2 }}%</td>
+                            <td class="percentage">{{ stone_percentage_proj|floatformat:1 }}%</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -646,8 +647,10 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                            Исходная площадь проекта = {{ project.total_square }}
             </div>
             {% endblock %}
+
         </div>
     </div>
 

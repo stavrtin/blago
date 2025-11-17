@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Система ввода данных - {{ project.name }}</title>
-<style>
-  * {
+    <style>
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -210,35 +210,53 @@
             cursor: not-allowed;
         }
 
+        /* Добавляем к существующим стилям */
+        .filters {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
 
-     /* Добавляем к существующим стилям */
-    .filters {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
+        .filters .form-group {
+            margin-bottom: 0;
+        }
 
-    .filters .form-group {
-        margin-bottom: 0;
-    }
+        .filters label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
 
-    .filters label {
-        font-weight: 600;
-        color: #495057;
-        margin-bottom: 8px;
-    }
+        .filters input {
+            border: 2px solid #ced4da;
+            transition: border-color 0.3s ease;
+        }
 
-    .filters input {
-        border: 2px solid #ced4da;
-        transition: border-color 0.3s ease;
-    }
+        .filters input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
 
-    .filters input:focus {
-        border-color: #3498db;
-        outline: none;
-    }
+        /* стили для User/ Выход */
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
 
+        .header {
+            position: relative;
+        }
+
+        .calculated-area {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -246,33 +264,22 @@ tab_start.html
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>Ввод данных по проекту "{{ project.name }}"
-
-            </h1>
+            <h1>Ввод данных по проекту "{{ project.name }}"</h1>
             <div class="user-info">
                 👤 {{ user.username }} | <a href="{% url 'app_calc:logout' %}" style="color: white; text-decoration: none;">Выйти</a>
             </div>
 
-<!--            <nav class="nav-menu">-->
-<!--                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>-->
-<!--                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>-->
-<!--            </nav>-->
-
             <nav class="nav-menu">
-    <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
-    <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>
-    <!-- Новая кнопка -->
-    <a href="{% url 'app_calc:add_new_property' project.id %}" class="nav-item" style="background: #27ae60;">
-        ➕ Добавить характеристику
-    </a>
-</nav>
-
-
+                <a href="{% url 'app_calc:projects_list' %}" class="nav-item">Назад к проектам</a>
+                <a href="{% url 'app_calc:results_balance_view' project.id %}" class="nav-item">Просмотр итогов</a>
+                <a href="{% url 'app_calc:add_new_property' project.id %}" class="nav-item" style="background: #27ae60;">
+                    ➕ Добавить характеристику
+                </a>
+            </nav>
         </header>
 
         <!-- Блок 1: Ввод данных -->
         <div class="input-section">
-<!--            <form method="POST" class="input-form" id="dataForm">-->
             <form method="POST" class="input-form" id="dataForm" data-project-id="{{ project.id }}">
                 {% csrf_token %}
                 <div class="form-row">
@@ -307,7 +314,7 @@ tab_start.html
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Сохранение</td>
+                                    <td> Сохранение  </td>
                                     <td><input type="number" name="square_sohran_pokr" step="0.1"></td>
                                     <td style="display: none;"><input type="hidden" name="length_sohran_pokr" value="0"></td>
                                 </tr>
@@ -334,32 +341,26 @@ tab_start.html
                             <thead>
                                 <tr>
                                     <th>Тип работ</th>
-                                    <th>Площадь</th>
-                                    <th>Длина</th>
+                                    <th>Площадь (кв.м.)<br>(авторасчет)</th>
+                                    <th>Длина (м.)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Демонтаж</td>
-                                    <td><input type="number" name="square_demon_bort" step="0.1"></td>
-                                    <td><input type="number" name="length_demon_bort" step="0.1"></td>
+                                    <td><input type="number" name="square_demon_bort" step="0.1" readonly class="calculated-area"></td>
+                                    <td><input type="number" name="length_demon_bort" step="0.1" class="length-input"></td>
                                 </tr>
                                 <tr>
                                     <td>Сохранение</td>
-                                    <td><input type="number" name="square_sohran_bort" step="0.1"></td>
-                                    <td><input type="number" name="length_sohran_bort" step="0.1"></td>
+                                    <td><input type="number" name="square_sohran_bort" step="0.1" readonly class="calculated-area"></td>
+                                    <td><input type="number" name="length_sohran_bort" step="0.1" class="length-input"></td>
                                 </tr>
-<!--                                <tr>-->
-<!--                                    <td>Восстановление</td>-->
-<!--                                    <td><input type="number" name="square_vosstan_bort" step="0.1"></td>-->
-<!--                                    <td><input type="number" name="length_vosstan_bort" step="0.1"></td>-->
-<!--                                </tr>-->
                                 <tr>
                                     <td>Установка</td>
-                                    <td><input type="number" name="square_ustroy_bort" step="0.1"></td>
-                                    <td><input type="number" name="length_ustroy_bort" step="0.1"></td>
+                                    <td><input type="number" name="square_ustroy_bort" step="0.1" readonly class="calculated-area"></td>
+                                    <td><input type="number" name="length_ustroy_bort" step="0.1" class="length-input"></td>
                                 </tr>
-
                             </tbody>
                         </table>
 
@@ -398,64 +399,77 @@ tab_start.html
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Добавить запись </button>
+                <button type="submit" class="submit-btn">Добавить запись</button>
             </form>
         </div>
 
-
-
         <!-- Блок 2: Таблица входных данных -->
-<div class="table-section">
-    <!-- Кнопка для скрытия/показа блока -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Внесенные сведения по площадям</h2>
-        <button type="button" id="toggle-table-btn" class="submit-btn"
-                style="margin-top: 0; padding: 8px 16px; font-size: 14px;">
-            Скрыть таблицу
-        </button>
-    </div>
-
-    <!-- Контейнер для фильтров и таблицы -->
-    <div id="table-container">
-        <!-- Фильтры для таблицы -->
-        <div class="filters" style="margin-bottom: 20px;">
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <div class="form-group">
-                    <label for="filter-element">Фильтр по элементу:</label>
-                    <input type="text" id="filter-element" placeholder="Поиск по элементу..." style="width: 250px;">
-                </div>
-                <div class="form-group">
-                    <label for="filter-property">Фильтр по характеристике:</label>
-                    <input type="text" id="filter-property" placeholder="Поиск по характеристике..." style="width: 250px;">
-                </div>
+        <div class="table-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Внесенные сведения по площадям</h2>
+                <button type="button" id="toggle-table-btn" class="submit-btn"
+                        style="margin-top: 0; padding: 8px 16px; font-size: 14px;">
+                    Скрыть таблицу
+                </button>
             </div>
-        </div>
 
-        <table class="data-table" id="input-data-table">
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Элемент площади</th>
-                    <th>Характеристика</th>
-                    <th>Площадь</th>
-                    <th>Длина</th>
-                    <th>Тип работ</th>
-                    <th>Внести правки</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in input_data %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ item.element_id.name_element }}</td>
-                    <td>{{ item.property_id.property_name }}</td>
-                    <td>{{ item.square|default:"" }}</td>
-                    <td>{{ item.length|default:"" }}</td>
-                    <td>{{ item.get_event_display|default:"" }}</td>
+            <div id="table-container">
+                <div class="filters" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div class="form-group">
+                            <label for="filter-element">Фильтр по элементу:</label>
+                            <input type="text" id="filter-element" placeholder="Поиск по элементу..." style="width: 250px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-property">Фильтр по характеристике:</label>
+                            <input type="text" id="filter-property" placeholder="Поиск по характеристике..." style="width: 250px;">
+                        </div>
+                    </div>
+                </div>
 
-                                        <td style="text-align: center;">
-    <!-- Кнопка редактирования -->
-    <a href="{% url 'app_calc:edit_input_data' item.id %}"
+                <table class="data-table" id="input-data-table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Элемент площади</th>
+                            <th>Характеристика</th>
+                            <th>Площадь</th>
+                            <th>Длина</th>
+                            <th>Тип работ</th>
+                            <th>Внести правки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in input_data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.element_id.name_element }}</td>
+                            <td>{{ item.property_id.property_name }}</td>
+                            <td>{{ item.square|default:"" }}</td>
+                            <td>{{ item.length|default:"" }}</td>
+                            <td>{{ item.get_event_display|default:"" }}</td>
+<!--                            <td style="text-align: center;">-->
+<!--                                <a href="{% url 'app_calc:edit_input_data' item.id %}"-->
+<!--                                   style="display: inline-block;-->
+<!--                                          text-decoration: none;-->
+<!--                                          padding: 6px 10px;-->
+<!--                                          margin: 0 2px;-->
+<!--                                          border-radius: 4px;-->
+<!--                                          border: 1px solid #3498db;-->
+<!--                                          background-color: #3498db;-->
+<!--                                          color: white;-->
+<!--                                          font-size: 16px;-->
+<!--                                          cursor: pointer;-->
+<!--                                          transition: all 0.3s ease;"-->
+<!--                                   title="Редактировать запись"-->
+<!--                                   onmouseover="this.style.backgroundColor='#2980b9'; this.style.borderColor='#2980b9'"-->
+<!--                                   onmouseout="this.style.backgroundColor='#3498db'; this.style.borderColor='#3498db'">-->
+<!--                                    ✏️-->
+<!--                                </a>-->
+<td style="text-align: center;">
+    <!-- Кнопка редактирования - переход на новый шаблон -->
+<!--    <a href="{% url 'app_calc:edit_single_input_data' item.id %}"-->
+    <a href="{% url 'app_calc:edit_single_input_data' item.id %}"
        style="display: inline-block;
               text-decoration: none;
               padding: 6px 10px;
@@ -473,62 +487,35 @@ tab_start.html
         ✏️
     </a>
 
-    <!-- Кнопка удаления   "confirm dialog" / "confirmation dialog" (диалоговое окно подтверждения)-->
-<!--    <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"-->
-<!--       style="display: inline-block;-->
-<!--              text-decoration: none;-->
-<!--              padding: 6px 10px;-->
-<!--              margin: 0 2px;-->
-<!--              border-radius: 4px;-->
-<!--              border: 1px solid #e74c3c;-->
-<!--              background-color: #e74c3c;-->
-<!--              color: white;-->
-<!--              font-size: 16px;-->
-<!--              cursor: pointer;-->
-<!--              transition: all 0.3s ease;"-->
-<!--       title="Удалить запись"-->
-<!--       onclick="return confirm(`Удаление записи-->
-<!--                               \- {{ item.element_id.name_element }}-->
-<!--                               \- {{ item.property_id.property_name }}-->
-<!--                               \- {{ item.get_event_display }}-->
-<!--                               \- {{ item.square }} м2-->
-<!--                               \nВы уверены в удалении?`)"-->
-<!--       onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"-->
-<!--       onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">-->
-<!--        🗑️-->
-<!--    </a>-->
-                                            <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"
-   style="display: inline-block;
-          text-decoration: none;
-          padding: 6px 10px;
-          margin: 0 2px;
-          border-radius: 4px;
-          border: 1px solid #e74c3c;
-          background-color: #e74c3c;
-          color: white;
-          font-size: 16px;
-          cursor: pointer;
-          transition: all 0.3s ease;"
-   title="Удалить запись"
-   onclick="return confirmDelete('{{ item.element_id.name_element }}', '{{ item.property_id.property_name }}', '{{ item.get_event_display }}', '{{ item.square|default:0 }}')"
-   onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"
-   onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">
-    🗑️
-</a>
-</td>
-
-
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align: center;">Нет данных</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
+                                <a href="{% url 'app_calc:confirm_delete_input_data' item.id %}"
+                                   style="display: inline-block;
+                                          text-decoration: none;
+                                          padding: 6px 10px;
+                                          margin: 0 2px;
+                                          border-radius: 4px;
+                                          border: 1px solid #e74c3c;
+                                          background-color: #e74c3c;
+                                          color: white;
+                                          font-size: 16px;
+                                          cursor: pointer;
+                                          transition: all 0.3s ease;"
+                                   title="Удалить запись"
+                                   onclick="return confirmDelete('{{ item.element_id.name_element }}', '{{ item.property_id.property_name }}', '{{ item.get_event_display }}', '{{ item.square|default:0 }}')"
+                                   onmouseover="this.style.backgroundColor='#c0392b'; this.style.borderColor='#c0392b'"
+                                   onmouseout="this.style.backgroundColor='#e74c3c'; this.style.borderColor='#e74c3c'">
+                                    🗑️
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Нет данных</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -536,12 +523,15 @@ tab_start.html
         const elementSelect = document.getElementById('element');
         const propertySelect = document.getElementById('property');
         const form = document.getElementById('dataForm');
-        const projectId = '{{ project.id }}';  // Получаем project_id из шаблона
+        const projectId = '{{ project.id }}';
 
         // Получаем все таблицы
         const tablePokritiya = document.getElementById('table-pokritiya');
         const tableBortovoy = document.getElementById('table-bortovoy');
         const tableOzelenenie = document.getElementById('table-ozelenenie');
+
+        // Переменные для управления бортовым камнем
+        let currentBortWidth = 0;
 
         // Элементы для скрытия/показа таблицы
         const toggleTableBtn = document.getElementById('toggle-table-btn');
@@ -602,78 +592,140 @@ tab_start.html
             if (tableOzelenenie) tableOzelenenie.classList.add('hidden');
         }
 
+        // Функция для извлечения ширины из названия характеристики
+        function extractWidthFromProperty(propertyName) {
+            const match = propertyName.match(/ш[.\s]*(\d+(?:[.,]\d+)?)/i);
+            if (match && match[1]) {
+                return parseFloat(match[1].replace(',', '.'));
+            }
+            return 0;
+        }
+
+        // Функция для расчета площади
+        function calculateArea(length, width) {
+            if (length && width) {
+                return (parseFloat(length) * width / 1000 ).toFixed(2);
+            }
+            return '';
+        }
+
+
+        // Функция для обновления всех полей площади бортового камня
+        function updateBortAreas() {
+            if (currentBortWidth > 0) {
+                const lengthInputs = tableBortovoy.querySelectorAll('.length-input');
+                const areaInputs = tableBortovoy.querySelectorAll('.calculated-area');
+
+                lengthInputs.forEach((lengthInput, index) => {
+                    const lengthValue = lengthInput.value;
+                    const calculatedArea = calculateArea(lengthValue, currentBortWidth);
+                    areaInputs[index].value = calculatedArea;
+                });
+            }
+        }
+
+        // Обработчик изменения полей длины для бортового камня
+        function setupBortLengthListeners() {
+            const lengthInputs = tableBortovoy.querySelectorAll('.length-input');
+            lengthInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateBortAreas();
+                });
+            });
+        }
+
+        // Функция для сброса таблицы бортового камня
+        function resetBortTable() {
+            const lengthInputs = tableBortovoy.querySelectorAll('.length-input');
+            const areaInputs = tableBortovoy.querySelectorAll('.calculated-area');
+
+            lengthInputs.forEach(input => input.value = '');
+            areaInputs.forEach(input => input.value = '');
+            currentBortWidth = 0;
+        }
+
         // Функция для загрузки характеристик
         function loadProperties(elementId) {
             if (!elementId) {
                 propertySelect.disabled = true;
                 propertySelect.innerHTML = '<option value="">-- Сначала выберите элемент --</option>';
                 hideAllTables();
+                currentBortWidth = 0;
                 return;
             }
 
             const selectedOption = elementSelect.options[elementSelect.selectedIndex];
             const elementName = selectedOption.textContent;
 
-            // Показываем соответствующую таблицу в зависимости от выбранного элемента
             hideAllTables();
 
             if (elementName.includes('Покрытия') || elementName.includes('Здания и сооружения')) {
                 if (tablePokritiya) tablePokritiya.classList.remove('hidden');
             } else if (elementName.includes('Бортовой камень')) {
                 if (tableBortovoy) tableBortovoy.classList.remove('hidden');
+                resetBortTable();
             } else if (elementName.includes('Озеленение')) {
                 if (tableOzelenenie) tableOzelenenie.classList.remove('hidden');
             }
 
-           // Запрос к API для получения характеристик с передачей project_id
-console.log('Fetching properties for element:', elementId, 'project:', projectId);
+            fetch(`/api/properties/?element_id=${elementId}&project_id=${projectId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(properties => {
+                    propertySelect.innerHTML = '';
+                    propertySelect.disabled = false;
 
-fetch(`/api/properties/?element_id=${elementId}&project_id=${projectId}`)
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '-- Выберите характеристику --';
+                    propertySelect.appendChild(defaultOption);
+
+                    if (properties.length === 0) {
+                        const noDataOption = document.createElement('option');
+                        noDataOption.value = '';
+                        noDataOption.textContent = '-- Нет доступных характеристик --';
+                        propertySelect.appendChild(noDataOption);
+                    } else {
+                        properties.forEach(prop => {
+                            const option = document.createElement('option');
+                            option.value = prop.id;
+                            option.textContent = prop.name;
+                            propertySelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching properties:', error);
+                    propertySelect.disabled = true;
+                    propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
+                });
         }
-        return response.json();
-    })
-    .then(properties => {
-        console.log('Received properties:', properties);
 
-        // Очищаем и заполняем выпадающий список характеристик
-        propertySelect.innerHTML = '';
-        propertySelect.disabled = false;
+        // Обработчик изменения выбора характеристики
+        propertySelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const propertyName = selectedOption.textContent;
+            const elementName = elementSelect.options[elementSelect.selectedIndex].textContent;
 
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Выберите характеристику --';
-        propertySelect.appendChild(defaultOption);
+            if (elementName.includes('Бортовой камень')) {
+                currentBortWidth = extractWidthFromProperty(propertyName);
+                console.log('Ширина бортового камня:', currentBortWidth);
 
-        if (properties.length === 0) {
-            const noDataOption = document.createElement('option');
-            noDataOption.value = '';
-            noDataOption.textContent = '-- Нет доступных характеристик --';
-            propertySelect.appendChild(noDataOption);
-        } else {
-            properties.forEach(prop => {
-                const option = document.createElement('option');
-                option.value = prop.id;
-                option.textContent = prop.name;
-                propertySelect.appendChild(option);
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching properties:', error);
-        propertySelect.disabled = true;
-        propertySelect.innerHTML = '<option value="">Ошибка загрузки характеристик</option>';
-    });
-        }
+                updateBortAreas();
+                setupBortLengthListeners();
+            }
+        });
 
         // Обработчик изменения выбора элемента
         if (elementSelect) {
             elementSelect.addEventListener('change', function() {
                 const elementId = this.value;
                 loadProperties(elementId);
+                currentBortWidth = 0;
             });
         }
 
@@ -686,7 +738,6 @@ fetch(`/api/properties/?element_id=${elementId}&project_id=${projectId}`)
                     return;
                 }
 
-                // Дополнительная проверка: хотя бы одно поле должно быть заполнено
                 const activeTable = document.querySelector('.data-table:not(.hidden)');
                 if (activeTable) {
                     const inputs = activeTable.querySelectorAll('input[type="number"]');
@@ -713,13 +764,59 @@ fetch(`/api/properties/?element_id=${elementId}&project_id=${projectId}`)
         if (elementSelect && elementSelect.value) {
             loadProperties(elementSelect.value);
         }
+
+        // Принудительно устанавливаем ширину таблиц
+        const tables = [
+            'table-pokritiya',
+            'table-bortovoy',
+            'table-ozelenenie'
+        ];
+
+        tables.forEach(tableId => {
+            const table = document.getElementById(tableId);
+            if (table) {
+                table.style.width = '50%';
+                table.style.margin = '0 auto';
+            }
+        });
     });
 
-    // Функция для подтверждения удаления (улучшенная версия)
+    // Функция для подтверждения удаления
     function confirmDelete(elementName, propertyName, eventType, square) {
         return confirm(`Удаление записи:\n• ${elementName}\n• ${propertyName}\n• ${eventType}\n• ${square} м²\n\nВы уверены в удалении?`);
     }
-</script>
 
+
+        // Добавить кликабельность строк таблицы
+document.addEventListener('DOMContentLoaded', function() {
+    const tableRows = document.querySelectorAll('#input-data-table tbody tr');
+
+    tableRows.forEach(row => {
+        // Пропускаем строку с сообщением "Нет данных"
+        if (row.cells.length > 1) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function(e) {
+                // Игнорируем клики по кнопкам
+                if (!e.target.closest('a')) {
+                    const editLink = this.querySelector('a[href*="edit-single-input-data"]');
+                    if (editLink) {
+                        window.location.href = editLink.href;
+                    }
+                }
+            });
+
+            // Эффект при наведении на всю строку
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f8ff';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+        }
+    });
+});
+
+    </script>
 </body>
 </html>

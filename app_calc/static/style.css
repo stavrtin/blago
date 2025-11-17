@@ -120,9 +120,15 @@ h3 {
 }
 
 .data-table {
-    width: 100%;
+    width: 50% !important;
+    max-width: 50% !important;
+    min-width: auto !important;
     border-collapse: collapse;
     margin-top: 10px;
+}
+.data-table.narrow-table {
+    width: 50% !important;
+    margin: 0 auto;
 }
 
 .data-table th,
