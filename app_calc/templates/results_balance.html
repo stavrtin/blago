@@ -421,7 +421,7 @@
     </style>
 </head>
 <body>
-results_balance.html
+results_balance.html -- -
     <div class="container">
         <!-- Header -->
         <header class="header">
@@ -441,16 +441,16 @@ results_balance.html
         <!-- Horizontal Menu -->
         <div class="horizontal-menu">
             <a href="{% url 'app_calc:results_balance_view' project.id %}" class="menu-button {% if request.resolver_match.url_name == 'results_balance' %}active{% endif %}">
-                📊 Балансовые показатели
+                ⚖️ Балансовые показатели
             </a>
             <a href="{% url 'app_calc:results_demontaj_view' project.id %}" class="menu-button {% if request.resolver_match.url_name == 'results_demontaj' %}active{% endif %}">
-                🏗️ Ведомость демонтажа
+                🛠️ Ведомость демонтажа
             </a>
             <a href="{% url 'app_calc:results_trotuar_view' project.id %}" class="menu-button {% if request.resolver_match.url_name == 'results_trotuar' %}active{% endif %}">
-                🛣️ Тротуары и дорожки
+                👢 Тротуары и дорожки
             </a>
             <a href="{% url 'app_calc:results_gazon_view' project.id %}" class="menu-button {% if request.resolver_match.url_name == 'results_gazon' %}active{% endif %}">
-                🌿 Ведомость газонов
+                🍀 Ведомость газонов
             </a>
         </div>
 
@@ -458,23 +458,24 @@ results_balance.html
         <div class="content-area">
             {% block content %}
             <!-- Балансовые показатели по умолчанию -->
-            <div class="balance-section">
+<!--            <div class="balance-section">-->
+            <div class="table-section">
                 <h2>Сравнительные балансовые показатели территории проектирования</h2>
 <!--                <div class="balance-nav">-->
 <!--                    <a href="{% url 'app_calc:v_edit_all_input_data' project.id %}" class="nav-item">Корректировка</a>-->
 <!--                </div>-->
-
+ <div style="max-width: 1000px; margin: 0 auto;">
                 <table class="balance-table">
                     <thead>
                         <tr>
                             <th rowspan="2">№</th>
-                            <th rowspan="2">Наименование</th>
+                            <th rowspan="2" style="text-align: center">Наименование</th>
                             <th colspan="2">Существующее положение</th>
                             <th colspan="2">Проектное положение</th>
                         </tr>
                         <tr>
                             <th class="subheader">кв.м</th>
-                            <th class="subheader">%</th>
+                            <th class="subheader" style="text-align: center">%</th>
                             <th class="subheader">кв.м</th>
                             <th class="subheader">%</th>
                         </tr>
@@ -485,23 +486,23 @@ results_balance.html
                             <td>1</td>
                             <td>Общая площадь</td>
                             <td style="{% if total_area_now != total_area_proj %}background-color: #f35e5e;{% else %}background-color: #68f368;{% endif %}">
-                                <b>{{ total_area_now }}</b>
+                                <b>{{ total_area_now|floatformat:1 }}</b>
                             </td>
-                            <td>100,00%</td>
+                            <td>100 %</td>
                             <td style="{% if total_area_now != total_area_proj %}background-color: #f35e5e;{% else %}background-color: #68f368;{% endif %}">
                                 <b>{{ total_area_proj }}</b>
                             </td>
-                            <td>100,00%</td>
+                            <td>100 %</td>
                         </tr>
 
                         <!-- Здания и сооружения -->
                         <tr class="category-header">
                             <td><b>2</b></td>
                             <td>Здания и сооружения</td>
-                            <td>{{ buildings_total_now }}</td>
-                            <td class="percentage">{{ buildings_percentage_now|floatformat:1 }}%</td>
-                            <td>{{ buildings_total_proj }}</td>
-                            <td class="percentage">{{ buildings_percentage_proj|floatformat:1 }}%</td>
+                            <td>{{ buildings_total_now|floatformat:1 }}</td>
+                            <td class="percentage">{{ buildings_percentage_now|floatformat:1 }} %</td>
+                            <td>{{ buildings_total_proj|floatformat:1 }}</td>
+                            <td class="percentage">{{ buildings_percentage_proj|floatformat:1 }} %</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -537,9 +538,9 @@ results_balance.html
                             <td><b>3</b></td>
                             <td>Покрытия</td>
                             <td>{{ coverings_total_now }}</td>
-                            <td class="percentage">{{ coverings_percentage_now|floatformat:1 }}%</td>
+                            <td class="percentage">{{ coverings_percentage_now|floatformat:1 }} %</td>
                             <td>{{ coverings_total_proj }}</td>
-                            <td class="percentage">{{ coverings_percentage_proj|floatformat:1 }}%</td>
+                            <td class="percentage">{{ coverings_percentage_proj|floatformat:1 }} %</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -575,9 +576,9 @@ results_balance.html
                             <td>4</td>
                             <td>Площадь озеленения</td>
                             <td>{{ landscaping_total_now }}</td>
-                            <td class="percentage">{{ landscaping_percentage_now|floatformat:1 }}%</td>
+                            <td class="percentage">{{ landscaping_percentage_now|floatformat:1 }} %</td>
                             <td>{{ landscaping_total_proj }}</td>
-                            <td class="percentage">{{ landscaping_percentage_proj|floatformat:1 }}%</td>
+                            <td class="percentage">{{ landscaping_percentage_proj|floatformat:1 }} %</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -612,10 +613,10 @@ results_balance.html
                         <tr class="category-header">
                             <td>5</td>
                             <td>Бортовой камень</td>
-                            <td>{{ stone_total_now }}</td>
-                            <td class="percentage">{{ stone_percentage_now|floatformat:1 }}%</td>
-                            <td>{{ stone_total_proj }}</td>
-                            <td class="percentage">{{ stone_percentage_proj|floatformat:1 }}%</td>
+                            <td>{{ stone_total_now|floatformat:1 }}</td>
+                            <td class="percentage">{{ stone_percentage_now|floatformat:1 }} %</td>
+                            <td>{{ stone_total_proj|floatformat:1 }}</td>
+                            <td class="percentage">{{ stone_percentage_proj|floatformat:1 }} %</td>
                         </tr>
 
                         {% for key, value in json_data_now_and_proj.items %}
@@ -631,20 +632,23 @@ results_balance.html
                                 <td>
                                     <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Бортовой камень&property={{ key|cut:'Бортовой камень.' }}"
                                        style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
-                                        {{ value.0|default:"-" }}
+                                        {{ value.0|default:"-"|floatformat:1 }}
                                     </a>
                                 </td>
                                 <td></td>
                                 <td>
                                     <a href="{% url 'app_calc:edit_balance_data' project.id %}?element=Бортовой камень&property={{ key|cut:'Бортовой камень.' }}"
                                        style="display: block; text-decoration: none; color: inherit; padding: 6px 4px; text-align: center;">
-                                        {{ value.1|default:"-" }}
+                                        {{ value.1|default:"-"|floatformat:1 }}
                                     </a>
                                 </td>
                                 <td></td>
                             </tr>
                             {% endif %}
                         {% endfor %}
+
+
+
                     </tbody>
                 </table>
                             Исходная площадь проекта = {{ project.total_square }}

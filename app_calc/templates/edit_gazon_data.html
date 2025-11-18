@@ -240,11 +240,11 @@
     <div class="container">
         <!-- Шапка -->
         <div class="header">
-            <h1>🌿 Редактирование газонов и озеленения</h1>
+            <h1>🍀 Редактирование газонов и озеленения</h1>
             <div class="object-info">
                 <h2>{{ element.name_element }} → {{ property.property_name }}</h2>
                 <p><strong>Проект:</strong> {{ project.name }}</p>
-                <p><strong>Тип работ:</strong> Уничтожение/Устройство/Сохранение/Восстановление</p>
+<!--                <p><strong>Тип работ:</strong> Уничтожение/Устройство/Сохранение/Восстановление</p>-->
             </div>
         </div>
 
@@ -253,7 +253,7 @@
             {% csrf_token %}
 
             <div class="form-section">
-                <div class="section-title">🌱 Редактирование записей озеленения</div>
+<!--                <div class="section-title">🌱 Редактирование записей озеленения</div>-->
 
                 {% if input_data_records %}
                 <table class="records-table">
@@ -306,13 +306,13 @@
                 </table>
 
                 <!-- Блок с суммой -->
-                <div class="sum-section">
-                    <h3>Сумма (устройство + сохранение + восстановление):</h3>
-                    <div class="sum-value">{{ sum_value|floatformat:2 }} м²</div>
-                    <p style="margin-top: 10px; font-size: 14px; color: #666;">
-                        *Сумма рассчитывается автоматически на основе введенных данных
-                    </p>
-                </div>
+<!--                <div class="sum-section">-->
+<!--                    <h3>Сумма (устройство + сохранение + восстановление):</h3>-->
+<!--                    <div class="sum-value">{{ sum_value|floatformat:2 }} м²</div>-->
+<!--                    <p style="margin-top: 10px; font-size: 14px; color: #666;">-->
+<!--                        *Сумма рассчитывается автоматически на основе введенных данных-->
+<!--                    </p>-->
+<!--                </div>-->
                 {% else %}
                 <div class="empty-message">
                     <p>Нет записей озеленения для редактирования</p>
@@ -322,12 +322,15 @@
 
             <!-- Кнопки действий -->
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    💾 Сохранить изменения
-                </button>
+
                 <a href="{% url 'app_calc:results_gazon_view' project.id %}" class="btn btn-secondary">
                     ← Назад к газонам
                 </a>
+
+                <button type="submit" class="btn btn-primary">
+                    💾 Сохранить изменения
+                </button>
+
                 <a href="{% url 'app_calc:tab_start_view' project.id %}" class="btn btn-secondary">
                     ➕ Добавить данные
                 </a>

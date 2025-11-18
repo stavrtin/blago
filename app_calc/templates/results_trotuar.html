@@ -5,15 +5,16 @@
 {% block content %}
 results_trotuar.html
 <div class="table-section">
-    <h2>Ведомость тротуаров и дорожек</h2>
+    <h2>Ведомость тротуаров, дорожек и площадок</h2>
 
  <div style="max-width: 900px; margin: 0 auto;">
-    <table class="statement-table">
-        <thead>
+    <table class="statement-table" style="text-align: center;">
+        <thead style="text-align: center;">
             <tr>
-                <th class="number-column">№</th>
+                <th class="number-column">Поз.</th>
                 <th class="name-column">Наименование</th>
-                <th class="area-column">Площадь, м²</th>
+                <th class="area-column">Тип</th>
+                <th class="area-column">Площадь покрытия, м²</th>
                 <th class="note-column">Примечание</th>
             </tr>
         </thead>
@@ -21,7 +22,7 @@ results_trotuar.html
             {% for category in categories %}
             <!-- Категория -->
             <tr class="category-row">
-                <td colspan="4"><strong>{{ category.name }}</strong></td>
+                <td colspan="5"><strong>{{ category.name }}</strong></td>
             </tr>
 
             <!-- Элементы категории -->
@@ -39,6 +40,8 @@ results_trotuar.html
                         {{ item.name }}
                     </a>
                 </td>
+                <td></td>
+
                 <td class="area-column">
                     <a href="{% url 'app_calc:v_edit_trotuar_data' project.id %}?element={{ category.name|urlencode }}&property={{ item.name|urlencode }}"
                        style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
@@ -65,7 +68,7 @@ results_trotuar.html
 <style>
     /* Стили для кликабельных строк тротуаров */
     .statement-table tbody tr.trotuar-item:hover {
-        background-color: #f0fff0 !important;
+        background-color: #f0aaa0 !important;
     }
 
     .statement-table tbody tr.trotuar-item a:hover {

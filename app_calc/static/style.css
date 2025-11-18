@@ -142,8 +142,12 @@ h3 {
 
 .data-table th,
 .balance-table th {
-    background: #34495e;
+    /*background: #34495e;
     color: white;
+    font-weight: bold;
+    text-align: center;*/
+    background: #f0f0f0 !important; /* светло-серый */
+    color: #000000 !important; /* черный */
     font-weight: bold;
     text-align: center;
 }
@@ -281,7 +285,8 @@ h3 {
 
 .balance-table .subcategory td {
     padding-left: 30px;
-    font-style: italic;
+    font-style: normal !important;
+
 }
 
 /* Выравнивание текста */
@@ -376,8 +381,8 @@ h3 {
 }
 
 .balance-style-table th {
-    background: #2c3e50;
-    color: white;
+    background: #f0f0f0 !important; /* светло-серый */
+    color: #000000 !important; /* черный */
     font-weight: bold;
     text-align: center;
     font-size: 18px;
@@ -459,23 +464,24 @@ h3 {
     font-size: 15px;
     line-height: 1.2;
     table-layout: fixed;
+
 }
 
 .statement-table th,
 .statement-table td {
     padding: 8px 6px;
-    text-align: left;
+    text-align: center;
     border: 1px solid #333;
     font-family: 'Times New Roman', Times, serif;
     vertical-align: middle;
 }
 
 .statement-table th {
-    background: #2c3e50;
-    color: white;
+    background: #f0f0f0 !important; /* светло-серый */
+    color: #000000 !important; /* черный */
     font-weight: bold;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px !important;
     padding: 10px 6px;
 }
 
@@ -486,7 +492,7 @@ h3 {
 
 .statement-table .name-column {
     width: 300px;
-    text-align: left;
+    text-align: center;
 }
 
 .statement-table .area-column {
@@ -533,11 +539,11 @@ h3 {
 }
 
 .gazon-table th {
-    background: #2c3e50;
-    color: white;
+    background: #f0f0f0 !important; /* светло-серый */
+    color: #000000 !important; /* черный */
     font-weight: bold;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px !important;
     padding: 10px 6px;
 }
 
@@ -549,12 +555,12 @@ h3 {
 .gazon-table .category-header td {
     font-weight: bold;
     background: #f0f0f0;
-    font-size: 16px;
+    font-size: 20px;
     padding: 8px 6px;
 }
 
 .gazon-table .sum-cell {
-    background-color: #e8f5e8;
+    background-color: #c8e6c9 !important;  /* еще один оттенок светло-зеленого */
     text-align: center;
     vertical-align: middle;
     font-weight: bold;
@@ -601,6 +607,7 @@ h3 {
 
     .statement-table .name-column {
         width: 200px;
+        align-text: center;
     }
 }
 
@@ -639,4 +646,204 @@ h3 {
 .gazon-table .category-header a:hover {
     background-color: #c3e6cb;
     border-radius: 3px;
+}
+/* Или более общее правило */
+.statement-table thead th {
+    text-align: center !important;
+}
+
+
+/* Скрытие горизонтальных границ для ячеек процентов в элементах площади */
+.balance-table tr.subcategory td:nth-child(4),
+.balance-table tr.subcategory td:nth-child(6) {
+    border-top: none !important;
+    border-bottom: none !important;
+}
+
+
+/* Восстановление нижней границы для последней строки таблицы */
+.balance-table tr:last-child td {
+    border-bottom: 1px solid #333 !important;
+}
+
+/* Или более специфично для последней subcategory */
+.balance-table tr.subcategory:last-child td {
+    border-bottom: 1px solid #333 !important;
+}
+
+/* Точное копирование стилей из statement-table */
+.balance-table tbody tr.subcategory {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    background: white !important;
+}
+
+.balance-table tbody tr.subcategory td {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 15px !important;
+    background: white !important;
+    padding: 8px 6px !important;
+}
+
+.balance-table tbody tr.subcategory a {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 15px !important;
+    color: #333 !important;
+    padding: 1px 1px !important;
+}
+
+/* Приведение шрифта балансовой таблицы к стилю тротуаров */
+.balance-table tbody tr.subcategory td {
+    font-style: normal !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+}
+
+.balance-table tbody tr.subcategory a {
+    font-style: normal !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+}
+
+/* Стили для строк демонтажа как в балансовой таблице (20px) */
+.statement-table tbody tr.demon-item {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+    background: white !important;
+}
+
+.statement-table tbody tr.demon-item td {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    background: white !important;
+    padding: 8px 6px !important;
+    font-style: normal !important;
+}
+
+.statement-table tbody tr.demon-item a {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    color: #333 !important;
+    padding: 1px 1px !important;
+    font-style: normal !important;
+}
+
+/* Стили для строк тротуаров как в балансовой таблице (20px) */
+.statement-table tbody tr.trotuar-item {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+    background: white !important;
+}
+
+.statement-table tbody tr.trotuar-item td {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    background: white !important;
+    padding: 8px 6px !important;
+    font-style: normal !important;
+}
+
+.statement-table tbody tr.trotuar-item a {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    color: #333 !important;
+    padding: 1px 1px !important;
+    font-style: normal !important;
+}
+
+/*--------------газонов--------------*/
+/* Стили для строк газонов как в балансовой таблице (20px) */
+.gazon-table tbody tr.gazon-item {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+    background: white !important;
+}
+
+.gazon-table tbody tr.gazon-item td {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    background: white !important;
+    padding: 8px 6px !important;
+    font-style: normal !important;
+}
+
+.gazon-table tbody tr.gazon-item a {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    color: #333 !important;
+    padding: 1px 1px !important;
+    font-style: normal !important;
+}
+
+/* Стили для заголовков категорий газонов (20px) */
+.gazon-table tbody tr.category-header {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+}
+
+.gazon-table tbody tr.category-header td {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    padding: 8px 6px !important;
+    font-style: normal !important;
+}
+
+.gazon-table tbody tr.category-header a {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 20px !important;
+    color: #333 !important;
+    padding: 1px 1px !important;
+    font-style: normal !important;
+}
+
+.statement-table .category-row {
+    background: #bfd5f3 !important;
+    font-weight: bold;
+}
+
+.statement-table .category-row td {
+    font-weight: bold;
+    background: #bfd5f3;
+    font-size: 18px;
+    padding: 10px 6px;
+    text-align: center;
+}
+
+/* Стили для категорий в таблице газонов (как в демонтаже) */
+.gazon-table .category-row {
+    background: #bfd5f3 !important;
+    font-weight: bold;
+}
+
+.gazon-table .category-row td {
+    font-weight: bold;
+    background: #bfd5f3 !important;
+    font-size: 18px;
+    padding: 2px 6px;
+    text-align: center;
+}
+
+/* Ширина колонок для таблицы газонов */
+.gazon-table {
+    table-layout: fixed;
+}
+
+.gazon-table th:nth-child(1),
+.gazon-table td:nth-child(1) {
+    width: 50%;
+}
+
+.gazon-table th:nth-child(2),
+.gazon-table td:nth-child(2) {
+    width: 25%;
+}
+
+.gazon-table th:nth-child(3),
+.gazon-table td:nth-child(3) {
+    width: 25%;
 }

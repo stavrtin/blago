@@ -8,25 +8,21 @@
     <table class="gazon-table">
         <thead>
             <tr>
-                <th>№</th>
                 <th>Наименование</th>
                 <th>Площадь</th>
-                <th>Сумма (устр+сохр+восст)</th>
+                <th>Суммарно <br> (без учета уничтожения)</th>
             </tr>
         </thead>
         <tbody>
             {% for property in properties_with_counts %}
             <!-- Основная строка с названием характеристики -->
-            <tr class="category-header">
-                <td><b>{{ forloop.counter }}</b></td>
-                <td>
+            <tr class="category-row">
+                <td colspan="3">
                     <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
-                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
-                        <b>{{ property.name }}</b>
+                       style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
+                        <strong>{{ property.name|capfirst }}</strong>
                     </a>
                 </td>
-                <td></td>
-                <td></td>
             </tr>
 
             <!-- Сначала выводим уничтожение -->
@@ -36,13 +32,7 @@
                     <td style="padding-left: 30px;">
                         <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
                            style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
-                            {{ forloop.parentloop.counter }}.{{ forloop.counter }}
-                        </a>
-                    </td>
-                    <td style="padding-left: 30px;">
-                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
-                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
-                            уничтожение
+                            Уничтожение
                         </a>
                     </td>
                     <td>
@@ -63,13 +53,7 @@
                     <td style="padding-left: 30px;">
                         <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
                            style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
-                            {{ forloop.parentloop.counter }}.{{ forloop.counter }}
-                        </a>
-                    </td>
-                    <td style="padding-left: 30px;">
-                        <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
-                           style="display: block; text-decoration: none; color: inherit; padding: 8px 6px;">
-                            {{ item.event }}
+                            {{ item.event|capfirst }}
                         </a>
                     </td>
                     <td>
@@ -81,7 +65,7 @@
 
                     <!-- Ячейка с суммой - отображаем только для первой строки -->
                     {% if forloop.first and property.valid_count > 0 %}
-                    <td rowspan="{{ property.valid_count }}" class="sum-cell">
+                    <td rowspan="{{ property.valid_count }}" style="background-color: #c8e6c9 !important;">
                         <a href="{% url 'app_calc:v_edit_gazon_data' project.id %}?element=Озеленение (обводнение)&property={{ property.name|urlencode }}"
                            style="display: block; text-decoration: none; color: inherit; padding: 8px 6px; text-align: center;">
                             <b>{{ property.sum_value|floatformat:2 }}</b>
@@ -94,7 +78,7 @@
 
             {% empty %}
             <tr>
-                <td colspan="4" style="text-align: center;">Нет данных по озеленению</td>
+                <td colspan="3" style="text-align: center;">Нет данных по озеленению</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -114,15 +98,6 @@
 
     .gazon-table tbody tr.gazon-item a {
         transition: background-color 0.3s ease;
-    }
-
-    .gazon-table .category-header:hover {
-        background-color: #d4edda !important;
-    }
-
-    .gazon-table .category-header a:hover {
-        background-color: #c3e6cb;
-        border-radius: 3px;
     }
 </style>
 {% endblock %}

@@ -267,6 +267,7 @@
     </style>
 </head>
 <body>
+edit_input_data_new.html
     <div class="container">
         <!-- Шапка -->
         <div class="header">
@@ -274,10 +275,10 @@
             <div class="object-info">
                 <h2>{{ element.name_element }} → {{ property.property_name }}</h2>
                 <p><strong>Проект:</strong> {{ project.name }}</p>
-                <p><strong>Количество записей:</strong> {{ input_data_records|length }}</p>
+<!--                <p><strong>Количество записей:</strong> {{ input_data_records|length }}</p>-->
                 {% if element.name_element == 'Бортовой камень' %}
                 <div class="auto-calculation-info">
-                    💡 <strong>Авторасчет площади:</strong> Площадь рассчитывается автоматически как Длина × Ширина
+                    💡 <strong>Для Бортовых камней </strong> площадь рассчитывается автоматически как Длина × Ширина
                 </div>
                 {% endif %}
             </div>
@@ -288,7 +289,7 @@
             {% csrf_token %}
 
             <div class="form-section">
-                <div class="section-title">📝 Редактирование всех записей "{{ element.name_element }} - {{ property.property_name }}"</div>
+<!--                <div class="section-title">📝 Редактирование всех записей "{{ element.name_element }} - {{ property.property_name }}"</div>-->
 
                 {% if input_data_records %}
                 <table class="records-table">
@@ -375,14 +376,18 @@
 
             <!-- Кнопки действий -->
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    💾 Сохранить все изменения
-                </button>
+
                 <a href="{% url 'app_calc:tab_start_view' project.id %}" class="btn btn-secondary">
                     ← Назад к вводу данных
                 </a>
+
+
+                <button type="submit" class="btn btn-primary">
+                    💾 Сохранить все изменения
+                </button>
+
                 <a href="{% url 'app_calc:results_balance_view' project.id %}" class="btn btn-secondary">
-                    📊 К балансам
+                    ⚖️ К балансам
                 </a>
             </div>
         </form>
@@ -406,24 +411,24 @@
         </div>
 
         <!-- Блок с текущими данными -->
-        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 6px; font-size: 14px; border-left: 4px solid #ffc107;">
-            <h4 style="color: #856404; margin-bottom: 10px;">📋 Сводка по записям:</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                <div><strong>Элемент:</strong> {{ element.name_element }}</div>
-                <div><strong>Характеристика:</strong> {{ property.property_name }}</div>
-                <div><strong>Количество записей:</strong> {{ input_data_records|length }}</div>
-                <div><strong>Общая площадь:</strong>
-                    {% with total=0 %}
-                        {% for record in input_data_records %}
-                            {% if record.square %}
-                                {% with total=total|add:record.square %}{% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                        {{ total|floatformat:2 }} м²
-                    {% endwith %}
-                </div>
-            </div>
-        </div>
+<!--        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 6px; font-size: 14px; border-left: 4px solid #ffc107;">-->
+<!--            <h4 style="color: #856404; margin-bottom: 10px;">📋 Сводка по записям:</h4>-->
+<!--            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">-->
+<!--                <div><strong>Элемент:</strong> {{ element.name_element }}</div>-->
+<!--                <div><strong>Характеристика:</strong> {{ property.property_name }}</div>-->
+<!--                <div><strong>Количество записей:</strong> {{ input_data_records|length }}</div>-->
+<!--                <div><strong>Общая площадь:</strong>-->
+<!--                    {% with total=0 %}-->
+<!--                        {% for record in input_data_records %}-->
+<!--                            {% if record.square %}-->
+<!--                                {% with total=total|add:record.square %}{% endwith %}-->
+<!--                            {% endif %}-->
+<!--                        {% endfor %}-->
+<!--                        {{ total|floatformat:2 }} м²-->
+<!--                    {% endwith %}-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 
     <script>
